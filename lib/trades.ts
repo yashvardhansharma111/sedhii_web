@@ -430,10 +430,10 @@ async function updatePosition(userId: ObjectId, trade: Trade) {
         );
       }
 
-      // Record P&L on the trade
+      // Record P&L and cost basis on the trade
       const pnl = (trade.price - existing.avgPrice) * trade.qty;
       const trades = await tradesCol();
-      await trades.updateOne({ _id: trade._id }, { $set: { pnl } });
+      await trades.updateOne({ _id: trade._id }, { $set: { pnl, avgPrice: existing.avgPrice } });
     }
   }
 }
@@ -609,13 +609,34 @@ export async function getRealPositions(userId: string) {
   });
 }
 
+/**
+ * For admin rows that have no explicit ltp set (ltp=0/falsy), fetch live LTP
+ * from Angel One and inject it so the position view shows a real market price
+ * instead of falling back to avgPrice (which makes LTP = Avg and P&L = 0).
+ */
+async function injectLiveLtp(rows: OrderRowEffective[]): Promise<OrderRowEffective[]> {
+  const needLtp = rows.filter((r) => !firstNonZero(r.ltp));
+  if (!needLtp.length) return rows;
+
+  const ltpMap = await fetchLTPsBatch(
+    needLtp.map((r) => ({ symbol: r.symbol, exchange: r.exchange || r.market || "NSE" })),
+  );
+
+  return rows.map((r) => {
+    if (firstNonZero(r.ltp)) return r; // already has explicit ltp
+    const live = ltpMap.get(`${r.exchange || r.market || "NSE"}:${r.symbol}`);
+    return live ? { ...r, ltp: live } : r;
+  });
+}
+
 /** Get user's open positions with live P&L (real + admin scoped-config rows). */
 export async function getPositions(userId: string) {
   const real = await getRealPositions(userId);
   const adminRows = await loadAdminRowsForUser(userId);
-  const adminPositions = adminRows
-    .filter((r) => (r.segmentKey || "positions") === "positions")
-    .map(mapAdminRowToPositionView);
+  const positionRows = await injectLiveLtp(
+    adminRows.filter((r) => (r.segmentKey || "positions") === "positions"),
+  );
+  const adminPositions = positionRows.map(mapAdminRowToPositionView);
   console.log(
     "[trades:bridge] getPositions",
     JSON.stringify({
@@ -723,9 +744,10 @@ export async function getHoldings(userId: string) {
   const adminRows = await loadAdminRowsForUser(userId);
   // Filter by segmentKey (same strategy as getPositions) to prevent a row from
   // appearing in both positions and holdings and doubling the P&L total.
-  const adminHoldings = adminRows
-    .filter((r) => r.segmentKey === "holdings")
-    .map(mapAdminRowToPositionView);
+  const holdingRows = await injectLiveLtp(
+    adminRows.filter((r) => r.segmentKey === "holdings"),
+  );
+  const adminHoldings = holdingRows.map(mapAdminRowToPositionView);
 
   console.log(
     "[trades:bridge] getHoldings",

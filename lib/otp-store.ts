@@ -98,3 +98,52 @@ export function clearVerification(target: OtpTarget, value: string): void {
   cache.del(key(target, value));
   console.log(`[otp-store] clearVerification target=${target} value=${value} remainingKeys=${cache.keys().length}`);
 }
+
+/** Persist verified status to MongoDB so it survives serverless cross-instance requests. */
+export async function persistVerifiedToDb(target: OtpTarget, value: string): Promise<void> {
+  try {
+    const { getDb } = await import("./mongodb");
+    const db = await getDb();
+    await db.collection("otp_verified").updateOne(
+      { target, value: value.trim().toLowerCase() },
+      { $set: { verified: true, verifiedAt: new Date() } },
+      { upsert: true },
+    );
+  } catch (err) {
+    console.error("[otp-store] persistVerifiedToDb failed (non-fatal):", err);
+  }
+}
+
+/** Check MongoDB as fallback when in-memory cache misses (cross-instance on serverless). */
+export async function isVerifiedWithFallback(target: OtpTarget, value: string): Promise<boolean> {
+  if (isVerified(target, value)) return true;
+  try {
+    const { getDb } = await import("./mongodb");
+    const db = await getDb();
+    const doc = await db.collection("otp_verified").findOne({
+      target,
+      value: value.trim().toLowerCase(),
+      verified: true,
+    });
+    if (doc) {
+      const ageMs = Date.now() - new Date(doc.verifiedAt).getTime();
+      const valid = ageMs < VERIFIED_TTL_SECONDS * 1000;
+      console.log(`[otp-store] isVerifiedWithFallback DB hit target=${target} value=${value} valid=${valid} ageMs=${ageMs}`);
+      return valid;
+    }
+  } catch (err) {
+    console.error("[otp-store] isVerifiedWithFallback DB check failed (non-fatal):", err);
+  }
+  return false;
+}
+
+/** Remove verified status from MongoDB (call after registration completes). */
+export async function clearVerifiedFromDb(target: OtpTarget, value: string): Promise<void> {
+  try {
+    const { getDb } = await import("./mongodb");
+    const db = await getDb();
+    await db.collection("otp_verified").deleteOne({ target, value: value.trim().toLowerCase() });
+  } catch (err) {
+    console.error("[otp-store] clearVerifiedFromDb failed (non-fatal):", err);
+  }
+}

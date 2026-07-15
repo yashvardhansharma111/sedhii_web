@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { apiErrorResponse } from "@/lib/api-error";
-import { verifyOtp, type OtpTarget } from "@/lib/otp-store";
+import { verifyOtp, persistVerifiedToDb, type OtpTarget } from "@/lib/otp-store";
 
 export async function POST(request: Request) {
   try {
@@ -36,6 +36,9 @@ export async function POST(request: Request) {
     if (!result.ok) {
       return NextResponse.json({ message: result.message }, { status: 400 });
     }
+
+    // Persist to MongoDB so register request succeeds even on a different serverless instance
+    await persistVerifiedToDb(target, value);
 
     return NextResponse.json({ verified: true, message: result.message });
   } catch (error) {

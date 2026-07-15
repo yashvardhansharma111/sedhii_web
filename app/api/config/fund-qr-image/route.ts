@@ -43,7 +43,9 @@ function toBytes(input: unknown): Uint8Array | null {
   return null;
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+  console.log("\n========== [fund-qr-image] GET ==========");
+  console.log("[fund-qr-image] caller:", request.headers.get("user-agent")?.slice(0, 60));
   try {
     const db = await getDb();
     const settings = db.collection("settings");
@@ -53,16 +55,26 @@ export async function GET() {
     });
 
     const value = doc?.value;
+    console.log("[fund-qr-image] doc found:", !!doc, "| has data:", !!value?.data, "| contentType:", value?.contentType ?? "none");
+
     if (!value?.data || !value?.contentType) {
+      console.log("[fund-qr-image] RESPONSE 404: no image in DB");
+      console.log("==========================================\n");
       return NextResponse.json({ message: "QR image not set" }, { status: 404 });
     }
 
     const bytes = toBytes(value.data);
+    console.log("[fund-qr-image] toBytes result:", bytes ? `${bytes.byteLength} bytes` : "null");
+
     if (!bytes || bytes.byteLength === 0) {
+      console.log("[fund-qr-image] RESPONSE 500: bytes conversion failed");
+      console.log("==========================================\n");
       return NextResponse.json({ message: "QR image invalid" }, { status: 500 });
     }
 
     const body = Buffer.from(bytes);
+    console.log("[fund-qr-image] RESPONSE 200: serving image", value.contentType, body.length, "bytes");
+    console.log("==========================================\n");
 
     return new NextResponse(body, {
       headers: {
@@ -71,7 +83,7 @@ export async function GET() {
       },
     });
   } catch (error) {
-    console.error("Config fund QR image error:", error);
+    console.error("[fund-qr-image] ERROR:", error);
     return NextResponse.json(
       { message: "Failed to load QR image" },
       { status: 500 },

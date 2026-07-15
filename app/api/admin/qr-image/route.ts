@@ -77,6 +77,7 @@ export async function POST(request: Request) {
             data,
             contentType: fileEntry.type,
             filename: fileEntry.name || null,
+            version: Date.now().toString(),
           },
           updatedAt: new Date(),
         },

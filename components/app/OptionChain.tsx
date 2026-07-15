@@ -463,7 +463,30 @@ export function OptionChain({
       else setRefreshing(true);
       try {
         const res = await fetchChain(symbol, exchange, expiry);
-        setData(res);
+        // During silent refresh, preserve previous non-zero LTPs — prevents
+        // flash-to-zero when a batch quote transiently returns 0
+        if (silent) {
+          setData((prev) => {
+            if (!prev) return res;
+            const prevMap = new Map(prev.chain.map((r) => [r.strike, r]));
+            const mergedChain = res.chain.map((row) => {
+              const old = prevMap.get(row.strike);
+              if (!old) return row;
+              return {
+                ...row,
+                CE: row.CE && old.CE && row.CE.ltp === 0 && old.CE.ltp !== 0
+                  ? { ...row.CE, ltp: old.CE.ltp, changePct: old.CE.changePct }
+                  : row.CE,
+                PE: row.PE && old.PE && row.PE.ltp === 0 && old.PE.ltp !== 0
+                  ? { ...row.PE, ltp: old.PE.ltp, changePct: old.PE.changePct }
+                  : row.PE,
+              };
+            });
+            return { ...res, chain: mergedChain };
+          });
+        } else {
+          setData(res);
+        }
         if (!expiry && res.expiry) setSelectedExpiry(res.expiry);
         setLastUpdated(Date.now());
         setPulse(true);

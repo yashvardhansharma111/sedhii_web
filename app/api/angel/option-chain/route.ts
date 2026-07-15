@@ -81,11 +81,14 @@ export async function GET(request: NextRequest) {
     const allStrikes = [...new Set([...allCalls.map((c) => c.strike), ...allPuts.map((p) => p.strike)])].sort(
       (a, b) => a - b,
     );
+    // Use median strike as fallback ATM when spot fetch failed — prevents
+    // including all 200+ strikes which causes rate-limit failures on batch quotes
+    const effectiveSpot = spotPrice > 0 ? spotPrice : allStrikes[Math.floor(allStrikes.length / 2)];
     let strikeFilter: Set<number>;
-    if (spotPrice > 0 && allStrikes.length > STRIKE_WINDOW * 2) {
+    if (allStrikes.length > STRIKE_WINDOW * 2) {
       const atmIdx = allStrikes.reduce(
         (best, _, idx) =>
-          Math.abs(allStrikes[idx] - spotPrice) < Math.abs(allStrikes[best] - spotPrice) ? idx : best,
+          Math.abs(allStrikes[idx] - effectiveSpot) < Math.abs(allStrikes[best] - effectiveSpot) ? idx : best,
         0,
       );
       const start = Math.max(0, atmIdx - STRIKE_WINDOW);
@@ -98,17 +101,21 @@ export async function GET(request: NextRequest) {
     const calls = allCalls.filter((c) => strikeFilter.has(c.strike));
     const puts = allPuts.filter((p) => strikeFilter.has(p.strike));
 
-    // Collect all option tokens for batch quote
+    // Collect all option tokens for batch quote — interleave CE/PE so each
+    // batch has a mix; avoids a rate-limit failure wiping out only CE or only PE
     const nfoTokens: string[] = [];
     const tokenToInstrument = new Map<string, any>();
 
-    for (const c of calls) {
-      nfoTokens.push(c.token);
-      tokenToInstrument.set(c.token, { ...c, optionType: "CE" });
-    }
-    for (const p of puts) {
-      nfoTokens.push(p.token);
-      tokenToInstrument.set(p.token, { ...p, optionType: "PE" });
+    const maxLen = Math.max(calls.length, puts.length);
+    for (let i = 0; i < maxLen; i++) {
+      if (i < calls.length) {
+        nfoTokens.push(calls[i].token);
+        tokenToInstrument.set(calls[i].token, { ...calls[i], optionType: "CE" });
+      }
+      if (i < puts.length) {
+        nfoTokens.push(puts[i].token);
+        tokenToInstrument.set(puts[i].token, { ...puts[i], optionType: "PE" });
+      }
     }
 
     // Batch quote (max 50 per request for Angel)

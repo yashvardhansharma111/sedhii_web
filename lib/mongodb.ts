@@ -23,31 +23,40 @@ if (!uri || !/^mongodb/i.test(uri)) {
   ].join(" "));
 }
 
-const options: MongoClientOptions = {};
-
-let client: MongoClient;
+const options: MongoClientOptions = {
+  serverSelectionTimeoutMS: 8_000,  // fail fast instead of hanging 30s
+  connectTimeoutMS: 8_000,
+  socketTimeoutMS: 20_000,          // fail fast on stale sockets
+  maxPoolSize: 5,
+  minPoolSize: 1,
+  maxIdleTimeMS: 30_000,            // close idle connections after 30s — before NAT/firewall drops them (~60s)
+  heartbeatFrequencyMS: 10_000,     // ping Atlas every 10s to detect dead nodes fast
+};
 
 declare global {
   // eslint-disable-next-line no-var
   var _mongoClientPromise: Promise<MongoClient> | undefined;
 }
 
-if (!global._mongoClientPromise) {
-  client = new MongoClient(uri, options);
-  global._mongoClientPromise = client.connect();
-  // Log masked URI once to help debugging without exposing credentials
-  // Useful when env differs between .env.local and .env or production
-  // Keep this as info-level so developers can spot misconfiguration.
+function connect(): Promise<MongoClient> {
   // eslint-disable-next-line no-console
-  console.info("Connecting to MongoDB using:", maskUri(uri));
+  console.info("Connecting to MongoDB using:", maskUri(uri!));
+  const c = new MongoClient(uri!, options);
+  const p = c.connect();
+  // If this connection attempt fails, clear the cached promise so the
+  // next request creates a fresh connection instead of re-awaiting a
+  // permanently-rejected promise.
+  p.catch(() => { global._mongoClientPromise = undefined; });
+  return p;
 }
 
-const clientPromise = global._mongoClientPromise;
-
 export async function getDb(dbName = process.env.MONGO_DB_NAME || "marketpulse"): Promise<Db> {
-  const client = await clientPromise;
+  if (!global._mongoClientPromise) {
+    global._mongoClientPromise = connect();
+  }
+  const client = await global._mongoClientPromise;
   return client.db(dbName);
 }
 
-export default clientPromise;
+export default { then: (r: any, e: any) => getDb().then(r, e) } as unknown as Promise<MongoClient>;
 

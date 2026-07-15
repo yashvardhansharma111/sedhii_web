@@ -2,6 +2,18 @@ import { NextRequest, NextResponse } from "next/server";
 import { angelPost } from "@/lib/angelone/session";
 import { INDEX_TOKENS, resolveTradable } from "@/lib/angelone/instruments";
 
+// 5-second LTP cache — absorbs burst requests and avoids Angel One rate-limit errors
+const ltpCache = new Map<string, { data: any; ts: number }>();
+const LTP_TTL_MS = 5_000;
+
+function getCached(key: string) {
+  const hit = ltpCache.get(key);
+  return hit && Date.now() - hit.ts < LTP_TTL_MS ? hit.data : null;
+}
+function setCache(key: string, data: any) {
+  ltpCache.set(key, { data, ts: Date.now() });
+}
+
 /**
  * GET /api/angel/ltp?symbol=RELIANCE&exchange=NSE
  * POST /api/angel/ltp  body: { tokens: [{ exchange: "NSE", symbol: "RELIANCE" }] }
@@ -37,6 +49,10 @@ export async function GET(request: NextRequest) {
     const exchange = sp.get("exchange") || "NSE";
     const mode = (sp.get("mode") || "FULL") as "LTP" | "OHLC" | "FULL";
 
+    const cacheKey = `${exchange}:${symbol}:${mode}`;
+    const cached = getCached(cacheKey);
+    if (cached) return NextResponse.json(cached);
+
     const resolved = await resolveToken(exchange, symbol);
     if (!resolved) {
       return NextResponse.json(
@@ -57,11 +73,9 @@ export async function GET(request: NextRequest) {
     }
 
     const fetched = result.data.fetched || result.data;
-    return NextResponse.json({
-      symbol,
-      exchange,
-      data: Array.isArray(fetched) ? fetched[0] : fetched,
-    });
+    const response = { symbol, exchange, data: Array.isArray(fetched) ? fetched[0] : fetched };
+    setCache(cacheKey, response);
+    return NextResponse.json(response);
   } catch (err: any) {
     console.error("[angel/ltp]", err);
     return NextResponse.json(

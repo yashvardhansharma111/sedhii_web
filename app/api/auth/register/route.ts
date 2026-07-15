@@ -1,7 +1,7 @@
 import { apiErrorResponse } from "@/lib/api-error";
 import { getDb } from "@/lib/mongodb";
 import { NextResponse } from "next/server";
-import { clearVerification, isVerified } from "@/lib/otp-store";
+import { clearVerification, clearVerifiedFromDb, isVerifiedWithFallback } from "@/lib/otp-store";
 
 /** Accept only HTTPS URLs from UploadThing / UFS CDNs (not arbitrary user-supplied hosts). */
 function isUploadThingHttpsUrl(url: string): boolean {
@@ -54,13 +54,13 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!isVerified("email", email)) {
+    if (!await isVerifiedWithFallback("email", email)) {
       return NextResponse.json(
         { message: "Please verify your email with the OTP before submitting." },
         { status: 400 },
       );
     }
-    if (!isVerified("phone", phone)) {
+    if (!await isVerifiedWithFallback("phone", phone)) {
       return NextResponse.json(
         { message: "Please verify your phone number with the OTP before submitting." },
         { status: 400 },
@@ -148,6 +148,8 @@ export async function POST(request: Request) {
     // Consume the OTP marks so they can't be reused.
     clearVerification("email", email);
     clearVerification("phone", phone);
+    void clearVerifiedFromDb("email", email);
+    void clearVerifiedFromDb("phone", phone);
 
     return NextResponse.json(
       {

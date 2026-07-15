@@ -21,7 +21,7 @@ export async function GET(request: Request) {
     const db = await getDb();
     const settings = db.collection("settings");
 
-    const imgDoc = await settings.findOne<{ value?: { data?: unknown } }>({
+    const imgDoc = await settings.findOne<{ value?: { data?: unknown; version?: string } }>({
       key: "fund_qr_image",
     });
     const metaDoc = await settings.findOne<{ value?: FundPaymentMeta }>({
@@ -41,11 +41,10 @@ export async function GET(request: Request) {
     });
 
     if (imgDoc?.value?.data) {
-      console.log("[fund-qr] response: qrUrl=/api/config/fund-qr-image (image stored in DB)");
-      return NextResponse.json({
-        qrUrl: "/api/config/fund-qr-image",
-        paymentMeta: meta,
-      });
+      const v = imgDoc.value.version || "1";
+      const qrUrl = `/api/config/fund-qr-image?v=${v}`;
+      console.log("[fund-qr] response: qrUrl=", qrUrl, "(image stored in DB, version:", v, ")");
+      return NextResponse.json({ qrUrl, paymentMeta: meta });
     }
 
     const doc = await settings.findOne<{ value?: string }>({
