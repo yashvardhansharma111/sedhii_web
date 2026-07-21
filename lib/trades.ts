@@ -224,14 +224,18 @@ function brokerageEstimate(totalValue: number, productType: string, isOption: bo
   return 0;
 }
 
-/** Returns true if current IST time is within NSE/BSE trading hours (Mon–Fri 9:15–15:30). */
-function isMarketOpen(): boolean {
+/** Returns true if current IST time is within trading hours (Mon–Fri).
+ *  MCX: 9:00 AM – 11:30 PM IST. All others: 9:15 AM – 3:30 PM IST. */
+function isMarketOpen(exchange = "NSE"): boolean {
   const utc = Date.now();
   const ist = new Date(utc + 5.5 * 60 * 60 * 1000);
-  const day = ist.getUTCDay(); // 0=Sun, 6=Sat in shifted time
+  const day = ist.getUTCDay();
   if (day === 0 || day === 6) return false;
   const mins = ist.getUTCHours() * 60 + ist.getUTCMinutes();
-  return mins >= 9 * 60 + 15 && mins <= 15 * 60 + 30;
+  const isMcx = exchange.toUpperCase() === "MCX";
+  const open = isMcx ? 9 * 60 : 9 * 60 + 15;
+  const close = isMcx ? 23 * 60 + 30 : 15 * 60 + 30;
+  return mins >= open && mins <= close;
 }
 
 /** Place a paper trade order with balance deduction/credit. */
@@ -263,7 +267,14 @@ export async function placeOrder(params: {
   } = params;
 
   if (qty <= 0) throw new Error("Quantity must be positive");
-  if (!isMarketOpen()) throw new Error("Market is closed. Trading hours are Mon–Fri 9:15 AM – 3:30 PM IST.");
+  const isMcxTrade = exchange.toUpperCase() === "MCX";
+  if (!isMarketOpen(exchange)) {
+    throw new Error(
+      isMcxTrade
+        ? "Market is closed. MCX trading hours are Mon–Fri 9:00 AM – 11:30 PM IST."
+        : "Market is closed. Trading hours are Mon–Fri 9:15 AM – 3:30 PM IST.",
+    );
+  }
 
   // Get real market price
   let executionPrice: number;
@@ -679,7 +690,10 @@ export async function getTradeHistory(userId: string, limit = 50) {
   });
 
   const adminRows = await loadAdminRowsForUser(userId);
-  const adminTrades = adminRows.map(mapAdminRowToTradeView);
+  // Only show admin rows explicitly configured for history — positions/holdings
+  // rows must not bleed into the History tab.
+  const historyRows = adminRows.filter((r) => r.segmentKey === "history");
+  const adminTrades = historyRows.map(mapAdminRowToTradeView);
 
   console.log(
     "[trades:bridge] getTradeHistory",
@@ -687,6 +701,7 @@ export async function getTradeHistory(userId: string, limit = 50) {
       userId,
       realCount: real.length,
       adminCount: adminTrades.length,
+      totalAdminRows: adminRows.length,
     }),
   );
   return [...real, ...adminTrades];

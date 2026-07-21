@@ -13,13 +13,16 @@ import {
 import { formatINR } from "./format";
 import { useAppData } from "./AppDataContext";
 
-function checkMarketOpen(): boolean {
+function checkMarketOpen(exchange = "NSE"): boolean {
   const utc = Date.now();
   const ist = new Date(utc + 5.5 * 60 * 60 * 1000);
   const day = ist.getUTCDay();
   if (day === 0 || day === 6) return false;
   const mins = ist.getUTCHours() * 60 + ist.getUTCMinutes();
-  return mins >= 9 * 60 + 15 && mins <= 15 * 60 + 30;
+  const isMcx = exchange.toUpperCase() === "MCX";
+  const open = isMcx ? 9 * 60 : 9 * 60 + 15;
+  const close = isMcx ? 23 * 60 + 30 : 15 * 60 + 30;
+  return mins >= open && mins <= close;
 }
 
 const PRODUCT_TYPES = [
@@ -87,13 +90,14 @@ export function OrderModal({
   const [placing, setPlacing] = useState(false);
   const [success, setSuccess] = useState<SuccessData | null>(null);
   const [err, setErr] = useState("");
-  const [marketOpen, setMarketOpen] = useState(checkMarketOpen);
+  const [marketOpen, setMarketOpen] = useState(() => checkMarketOpen(exchange));
 
   // Re-evaluate market status every minute
   useEffect(() => {
-    const id = setInterval(() => setMarketOpen(checkMarketOpen()), 60_000);
+    setMarketOpen(checkMarketOpen(exchange));
+    const id = setInterval(() => setMarketOpen(checkMarketOpen(exchange)), 60_000);
     return () => clearInterval(id);
-  }, []);
+  }, [exchange]);
 
   // Reset form and fetch fresh LTP when modal opens
   useEffect(() => {
@@ -451,7 +455,9 @@ export function OrderModal({
               >
                 <span className="text-base">🔒</span>
                 <p className="text-xs font-semibold" style={{ color: "#d97706" }}>
-                  Market closed · Mon–Fri 9:15 AM – 3:30 PM IST
+                  {exchange.toUpperCase() === "MCX"
+                    ? "Market closed · Mon–Fri 9:00 AM – 11:30 PM IST"
+                    : "Market closed · Mon–Fri 9:15 AM – 3:30 PM IST"}
                 </p>
               </div>
             )}

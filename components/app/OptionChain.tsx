@@ -69,12 +69,15 @@ function formatAgo(ms: number) {
   return `${Math.floor(ms / 60000)}m ago`;
 }
 
-function isMarketOpen(): boolean {
+function isMarketOpen(exchange = "NSE"): boolean {
   const ist = new Date(Date.now() + 5.5 * 60 * 60 * 1000);
   const day = ist.getUTCDay();
   if (day === 0 || day === 6) return false;
   const mins = ist.getUTCHours() * 60 + ist.getUTCMinutes();
-  return mins >= 9 * 60 + 15 && mins <= 15 * 60 + 30;
+  const isMcx = exchange.toUpperCase() === "MCX";
+  const open = isMcx ? 9 * 60 : 9 * 60 + 15;
+  const close = isMcx ? 23 * 60 + 30 : 15 * 60 + 30;
+  return mins >= open && mins <= close;
 }
 
 async function fetchChain(
@@ -107,7 +110,7 @@ function OrderModal({
   const [orderType, setOrderType] = useState<"MARKET" | "LIMIT">("MARKET");
   const [submitting, setSubmitting] = useState(false);
   const [msg, setMsg] = useState<{ text: string; ok: boolean } | null>(null);
-  const [marketOpen] = useState(isMarketOpen);
+  const [marketOpen] = useState(() => isMarketOpen(target?.exchange));
 
   useEffect(() => {
     if (target) {
@@ -262,7 +265,9 @@ function OrderModal({
             >
               <span className="text-sm">🔒</span>
               <p className="text-xs font-semibold" style={{ color: "#d97706" }}>
-                Market closed · Mon–Fri 9:15 AM – 3:30 PM IST
+                {target?.exchange?.toUpperCase() === "MCX"
+                  ? "Market closed · Mon–Fri 9:00 AM – 11:30 PM IST"
+                  : "Market closed · Mon–Fri 9:15 AM – 3:30 PM IST"}
               </p>
             </div>
           )}

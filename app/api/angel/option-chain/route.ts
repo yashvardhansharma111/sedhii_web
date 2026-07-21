@@ -56,15 +56,14 @@ export async function GET(request: NextRequest) {
           spotPrice = Number(spotResult.data.fetched[0].ltp);
         }
       } else {
-        const { findBySymbol } = await import("@/lib/angelone/instruments");
+        const { resolveTradable } = await import("@/lib/angelone/instruments");
+        // resolveTradable handles MCX (nearest-month FUTCOM) + NSE/BSE (-EQ suffix)
         const underlyingExchange = exchange === "NFO" ? "NSE" : exchange === "BFO" ? "BSE" : "MCX";
-        const inst =
-          (await findBySymbol(underlyingExchange, symbol)) ||
-          (await findBySymbol(underlyingExchange, `${symbol}-EQ`));
+        const inst = await resolveTradable(underlyingExchange, symbol);
         if (inst) {
           const spotResult = await angelPost(
             "/rest/secure/angelbroking/market/v1/quote/",
-            { mode: "LTP", exchangeTokens: { [underlyingExchange]: [inst.token] } },
+            { mode: "LTP", exchangeTokens: { [inst.exch_seg]: [inst.token] } },
           );
           if (spotResult.status && spotResult.data?.fetched?.[0]) {
             spotPrice = Number(spotResult.data.fetched[0].ltp);
