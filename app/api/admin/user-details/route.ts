@@ -54,9 +54,17 @@ export async function GET(request: Request) {
     }
 
     const db = await getDb();
-    const user = await db.collection("users").findOne({
-      _id: new ObjectId(userId),
-    });
+    const user = await db.collection("users").findOne(
+      { _id: new ObjectId(userId) },
+      {
+        projection: {
+          "documents.photo.data": 0,
+          "documents.signature.data": 0,
+          "documents.bankProof.data": 0,
+          "documents.document.data": 0,
+        },
+      },
+    );
 
     if (!user) {
       return NextResponse.json({ message: "User not found" }, { status: 404 });
