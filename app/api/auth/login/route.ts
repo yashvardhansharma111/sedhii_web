@@ -27,6 +27,13 @@ export async function POST(request: Request) {
         : {
             $or: [{ clientId: loginId }, { email: loginId }],
           },
+      {
+        projection: {
+          _id: 1,
+          passwordHash: 1,
+          status: 1,
+        },
+      },
     );
 
     if (!user || user.status !== "active" || !user.passwordHash) {

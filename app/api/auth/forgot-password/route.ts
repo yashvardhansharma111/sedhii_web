@@ -11,7 +11,10 @@ export async function POST(request: Request) {
     }
 
     const db = await getDb();
-    const user = await db.collection("users").findOne({ email: email.trim().toLowerCase() });
+    const user = await db.collection("users").findOne(
+      { email: email.trim().toLowerCase() },
+      { projection: { _id: 1 } },
+    );
     if (!user) {
       // Don't reveal whether email exists
       return NextResponse.json({ message: "If that email is registered, a code has been sent." });

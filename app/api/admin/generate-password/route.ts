@@ -40,9 +40,10 @@ export async function POST(request: Request) {
     const db = await getDb();
     const users = db.collection("users");
 
-    const user = await users.findOne<{ email?: string; status?: string; clientId?: string; fullName?: string }>({
-      _id: new ObjectId(userId),
-    });
+    const user = await users.findOne<{ email?: string; status?: string; clientId?: string; fullName?: string }>(
+      { _id: new ObjectId(userId) },
+      { projection: { _id: 1, email: 1, status: 1, clientId: 1, fullName: 1 } },
+    );
 
     if (!user) {
       return NextResponse.json({ message: "User not found" }, { status: 404 });

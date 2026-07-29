@@ -60,7 +60,17 @@ export async function getUserBySessionToken(token: string | undefined | null) {
   }
 
   const users = db.collection("users");
-  return users.findOne({ _id: new ObjectId(session.userId) });
+  return users.findOne(
+    { _id: new ObjectId(session.userId) },
+    {
+      projection: {
+        "documents.photo.data": 0,
+        "documents.signature.data": 0,
+        "documents.bankProof.data": 0,
+        "documents.document.data": 0,
+      },
+    },
+  );
 }
 
 export async function getUserFromSession() {
