@@ -76,7 +76,7 @@ function formatPrice(n: number | undefined | null) {
 }
 
 /** Keep last-good prices when a refresh returns 0 / missing quotes. */
-function hasGoodLtp(entry?: OptionEntry | null) {
+function hasGoodLtp(entry?: OptionEntry | null): entry is OptionEntry {
   return !!(entry && Number.isFinite(entry.ltp) && entry.ltp > 0);
 }
 
