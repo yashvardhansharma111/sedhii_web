@@ -806,7 +806,7 @@ export default function HomePage() {
                 markets.&rdquo;
               </p>
               <p className="mt-4 text-sm font-medium" style={{ color: D.textSec }}>
-                — Grow Capital team
+                â€” Grow Capital team
               </p>
               <div
                 className="mt-8 flex flex-wrap gap-2 border-t pt-6 text-[10px] font-semibold uppercase tracking-wider"
@@ -1129,7 +1129,7 @@ export default function HomePage() {
                   Ready to get started?
                 </h3>
                 <p className="mt-2 text-sm sm:text-base" style={{ color: D.textSec }}>
-                  Request an account — the Grow Capital team reviews every request
+                  Request an account â€” the Grow Capital team reviews every request
                   and emails credentials from {SUPPORT_EMAIL} once approved.
                 </p>
               </div>
@@ -1257,7 +1257,7 @@ export default function HomePage() {
 
           {/* Bottom bar */}
           <div className="mt-6 flex flex-col items-start justify-between gap-3 border-t border-slate-100 pt-6 text-xs text-slate-400 md:flex-row md:items-center">
-            <p>© {new Date().getFullYear()} Grow Capital. All rights reserved.</p>
+            <p>Â© {new Date().getFullYear()} Grow Capital. All rights reserved.</p>
             <p className="max-w-xl text-center md:text-right">
               Investments in securities market are subject to market risks.
               Read all scheme related documents carefully before investing.
