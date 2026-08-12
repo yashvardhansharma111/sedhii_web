@@ -806,7 +806,7 @@ export default function HomePage() {
                 markets.&rdquo;
               </p>
               <p className="mt-4 text-sm font-medium" style={{ color: D.textSec }}>
-                â€” Grow Capital team
+                — Grow Capital team
               </p>
               <div
                 className="mt-8 flex flex-wrap gap-2 border-t pt-6 text-[10px] font-semibold uppercase tracking-wider"
@@ -1129,7 +1129,7 @@ export default function HomePage() {
                   Ready to get started?
                 </h3>
                 <p className="mt-2 text-sm sm:text-base" style={{ color: D.textSec }}>
-                  Request an account â€” the Grow Capital team reviews every request
+                  Request an account — the Grow Capital team reviews every request
                   and emails credentials from {SUPPORT_EMAIL} once approved.
                 </p>
               </div>
@@ -1218,79 +1218,8 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Office addresses */}
-          <div className="mt-10 rounded-2xl border border-slate-100 bg-slate-50 p-6">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-5">Our Offices</p>
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4 text-xs text-slate-400 leading-relaxed">
-
-              {/* Main / Head Office */}
-              <div className="space-y-0.5">
-                <p className="font-semibold text-slate-800 text-[11px] mb-1">Main Office</p>
-                <p className="text-[10px] uppercase tracking-wide text-slate-400 mb-1">Registered &amp; Corporate</p>
-                <p>
-                  Grow Capital Towers,<br />
-                  Thakaraparambu Road,<br />
-                  Fort P.O, Trivandrum 695023<br />
-                </p>
-                <p className="mt-1">Ph: +91-471-4093333, 4093444</p>
-                <a href="mailto:cspl@growcapitalco.com" className="block hover:text-slate-900">cspl@growcapitalco.com</a>
-                <div className="mt-2 pt-2 border-t border-slate-100">
-                  <p className="text-[10px] uppercase tracking-wide text-slate-400 mb-0.5">Annexe 1  Legal</p>
-                  <p>&ldquo;Gokulam&rdquo;, SRA-62,<br />Sreekanteswaram, Fort P.O,<br />Vanchiyoor, Trivandrum 695023, Kerala</p>
-                </div>
-                <div className="mt-2 pt-2 border-t border-slate-100">
-                  <p className="text-[10px] uppercase tracking-wide text-slate-400 mb-0.5">Annexe 2</p>
-                  <p>Ananda Bhavan,<br />Thakaraparambu Road,<br />Fort P.O, Trivandrum 695023</p>
-                </div>
-              </div>
-
-              {/* Regional  South */}
-              <div className="space-y-3">
-                <div>
-                  <p className="font-semibold text-slate-800 text-[11px] mb-1">Ernakulam</p>
-                  <p>IInd Floor, 39/1728D, Tharakan House,<br />Pallimukku, Opp. Coir Board,<br />M.G. Road, Ernakulam 682016</p>
-                  <p className="mt-1">Ph: 04844031998, 4618558<br />Mob: 9847460187</p>
-                  <a href="mailto:kochi@growcapitalco.com" className="block hover:text-slate-900">kochi@growcapitalco.com</a>
-                </div>
-                <div className="pt-2 border-t border-slate-100">
-                  <p className="font-semibold text-slate-800 text-[11px] mb-1">Thrissur</p>
-                  <p>Room No 41, 2nd Floor,<br />Suharsha Towers, Shornur Road,<br />Round North, Thrissur 680001</p>
-                  <p className="mt-1">Ph: 04872994553<br />Mob: 9349050226, 9847768658</p>
-                  <a href="mailto:thrissur@growcapitalco.com" className="block hover:text-slate-900">thrissur@growcapitalco.com</a>
-                </div>
-              </div>
-
-              {/* Regional  North */}
-              <div className="space-y-3">
-                <div>
-                  <p className="font-semibold text-slate-800 text-[11px] mb-1">Calicut</p>
-                  <p>19/2096, Indus Avenue, C2 Part,<br />1st Floor, Kallai Road,<br />Calicut 673002</p>
-                  <p className="mt-1">Ph: 0495-4017734, 2301734, 2951734<br />Mob: 9387440171, 9387077723</p>
-                  <a href="mailto:calicutro@growcapitalco.com" className="block hover:text-slate-900">calicutro@growcapitalco.com</a>
-                </div>
-              </div>
-
-              {/* Metro */}
-              <div className="space-y-3">
-                <div>
-                  <p className="font-semibold text-slate-800 text-[11px] mb-1">Chennai</p>
-                  <p>20/3 &amp; 4, Indiradevi Complex,<br />Gopalakrishna Street, T. Nagar,<br />Chennai 600017</p>
-                  <p className="mt-1">Ph: 044-28156920, 28156921<br />Mob: 9791802660, 9380010870</p>
-                  <a href="mailto:chennai@growcapitalco.com" className="block hover:text-slate-900">chennai@growcapitalco.com</a>
-                </div>
-                <div className="pt-2 border-t border-slate-100">
-                  <p className="font-semibold text-slate-800 text-[11px] mb-1">Bangalore</p>
-                  <p>802, Ground Floor, 9th A-Main Road,<br />Indira Nagar 1st Stage,<br />Bangalore 560038</p>
-                  <p className="mt-1">Ph: 080-25287565 / 25287566<br />Mob: 9343686898, 9379585700</p>
-                  <a href="mailto:bangalore@growcapitalco.com" className="block hover:text-slate-900">bangalore@growcapitalco.com</a>
-                </div>
-              </div>
-
-            </div>
-          </div>
-
           {/* Regulatory info */}
-          <div className="mt-4 rounded-2xl border border-slate-100 bg-slate-50 p-6">
+          <div className="mt-10 rounded-2xl border border-slate-100 bg-slate-50 p-6">
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               <div>
                 <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-2">Membership</p>
@@ -1328,7 +1257,7 @@ export default function HomePage() {
 
           {/* Bottom bar */}
           <div className="mt-6 flex flex-col items-start justify-between gap-3 border-t border-slate-100 pt-6 text-xs text-slate-400 md:flex-row md:items-center">
-            <p>Â© {new Date().getFullYear()} Grow Capital. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} Grow Capital. All rights reserved.</p>
             <p className="max-w-xl text-center md:text-right">
               Investments in securities market are subject to market risks.
               Read all scheme related documents carefully before investing.
