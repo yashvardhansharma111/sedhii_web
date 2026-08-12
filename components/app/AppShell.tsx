@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -71,7 +71,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         >
           <Image
             src="/icon.jpeg"
-            alt="Capstockx"
+            alt="Grow Capital"
             width={40}
             height={40}
             className="rounded-xl object-contain"
@@ -81,13 +81,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               className="text-[11px] font-semibold uppercase tracking-wider"
               style={{ color: "var(--ax-primary)" }}
             >
-              Cap
+              Grow
             </p>
             <p
               className="-mt-0.5 text-base font-bold"
               style={{ color: "var(--ax-text-primary)" }}
             >
-              Stocks
+              Capital
             </p>
           </div>
         </Link>
@@ -168,7 +168,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             >
               <Image
                 src="/icon.jpeg"
-                alt="Capstockx"
+                alt="Grow Capital"
                 width={32}
                 height={32}
                 className="rounded-lg object-contain"
@@ -177,7 +177,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 className="text-sm font-bold"
                 style={{ color: "var(--ax-text-primary)" }}
               >
-                Capstockx
+                Grow Capital
               </span>
             </Link>
             <div className="hidden md:block">
@@ -188,7 +188,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 {NAV.find(
                   (n) =>
                     pathname === n.href || pathname.startsWith(n.href + "/"),
-                )?.label || "Capstockx"}
+                )?.label || "Grow Capital"}
               </h1>
             </div>
 

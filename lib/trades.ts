@@ -238,6 +238,83 @@ function isMarketOpen(exchange = "NSE"): boolean {
   return mins >= open && mins <= close;
 }
 
+/** True when a LIMIT order can fill against the current LTP. */
+function isLimitMarketable(
+  side: "BUY" | "SELL",
+  ltp: number,
+  limitPrice: number,
+): boolean {
+  return side === "BUY" ? ltp <= limitPrice : ltp >= limitPrice;
+}
+
+/** Qty already reserved by pending SELL limits for the same instrument. */
+async function pendingSellReservedQty(
+  userId: ObjectId,
+  symbol: string,
+  exchange: string,
+  optionType?: string,
+  strikePrice?: number,
+  expiry?: string,
+): Promise<number> {
+  const trades = await tradesCol();
+  const pending = await trades
+    .find({
+      userId,
+      symbol,
+      exchange,
+      side: "SELL",
+      status: "PENDING",
+      ...(optionType ? { optionType, strikePrice, expiry } : {}),
+    })
+    .toArray();
+  return pending.reduce((sum, t) => sum + t.qty, 0);
+}
+
+/**
+ * Apply position + balance effects for an already-persisted EXECUTED trade.
+ * For BUY LIMIT that reserved funds at place time, pass balanceAlreadyApplied=true
+ * and optionally reservedAmount so any unused margin is refunded on a better fill.
+ */
+async function settleExecutedTrade(
+  trade: Trade,
+  opts?: { balanceAlreadyApplied?: boolean; reservedAmount?: number },
+): Promise<number> {
+  const uid = trade.userId;
+  const isOption = !!trade.optionType;
+  const totalValue = trade.price * trade.qty;
+  const marginReq = totalValue * marginFactor(trade.productType, isOption);
+  const brokerage = brokerageEstimate(totalValue, trade.productType, isOption);
+
+  await updatePosition(uid, trade);
+
+  const db = await getDb();
+  const users = db.collection("users");
+  const user = await users.findOne({ _id: uid });
+  const currentBalance = Number(user?.tradingBalance ?? 0);
+
+  let delta = 0;
+  if (trade.side === "BUY") {
+    const actualCost = marginReq + brokerage;
+    if (opts?.balanceAlreadyApplied) {
+      const reserved = opts.reservedAmount ?? actualCost;
+      delta = reserved - actualCost; // refund unused reserve when fill < limit
+    } else {
+      delta = -actualCost;
+    }
+  } else {
+    delta = totalValue - brokerage;
+  }
+
+  if (delta === 0) return currentBalance;
+
+  const updatedUser = await users.findOneAndUpdate(
+    { _id: uid },
+    { $inc: { tradingBalance: delta } },
+    { returnDocument: "after" },
+  );
+  return Number(updatedUser?.tradingBalance ?? currentBalance + delta);
+}
+
 /** Place a paper trade order with balance deduction/credit. */
 export async function placeOrder(params: {
   userId: string;
@@ -276,13 +353,24 @@ export async function placeOrder(params: {
     );
   }
 
-  // Get real market price
+  const ltp = await fetchLTP(symbol, exchange);
+
+  // MARKET always fills at LTP. LIMIT fills only when price is marketable;
+  // otherwise the order rests as PENDING until LTP reaches the limit.
   let executionPrice: number;
+  let fillNow = true;
   if (orderType === "MARKET") {
-    executionPrice = await fetchLTP(symbol, exchange);
+    executionPrice = ltp;
   } else {
     if (!limitPrice || limitPrice <= 0) throw new Error("Limit price required");
-    executionPrice = limitPrice;
+    if (isLimitMarketable(side, ltp, limitPrice)) {
+      // Fill at LTP (limit or better) — never invent a fill at the target alone.
+      executionPrice = ltp;
+      fillNow = true;
+    } else {
+      executionPrice = limitPrice; // display / reserve price while resting
+      fillNow = false;
+    }
   }
 
   const uid = new ObjectId(userId);
@@ -299,7 +387,7 @@ export async function placeOrder(params: {
   if (!user) throw new Error("User not found");
   const currentBalance = Number(user.tradingBalance ?? 0);
 
-  // BUY: check balance sufficient (margin + brokerage)
+  // BUY: check balance sufficient (margin + brokerage). Pending buys reserve now.
   if (side === "BUY") {
     const needed = marginReq + brokerage;
     if (currentBalance < needed) {
@@ -309,7 +397,7 @@ export async function placeOrder(params: {
     }
   }
 
-  // SELL: check we have enough holdings/position
+  // SELL: check holdings minus qty already reserved by other pending sell limits
   if (side === "SELL") {
     const positions = await positionsCol();
     const existing = await positions.findOne({
@@ -319,10 +407,19 @@ export async function placeOrder(params: {
       side: "BUY",
       ...(optionType ? { optionType, strikePrice, expiry } : {}),
     });
-
-    if (!existing || existing.qty < qty) {
+    const reserved = await pendingSellReservedQty(
+      uid,
+      symbol,
+      exchange,
+      optionType,
+      strikePrice,
+      expiry,
+    );
+    const available = (existing?.qty || 0) - reserved;
+    if (!existing || available < qty) {
       throw new Error(
-        `Insufficient holdings. You have ${existing?.qty || 0} of ${symbol}`,
+        `Insufficient holdings. You have ${available} of ${symbol} available` +
+          (reserved > 0 ? ` (${reserved} reserved by open limit sells)` : ""),
       );
     }
   }
@@ -336,17 +433,17 @@ export async function placeOrder(params: {
     qty,
     price: executionPrice,
     limitPrice: orderType === "LIMIT" ? limitPrice : undefined,
-    status: "EXECUTED",
+    status: fillNow ? "EXECUTED" : "PENDING",
     productType: productType as any,
     lotSize: 1,
     totalValue,
-    segmentKey: "history",
+    segmentKey: fillNow ? "history" : "openOrders",
     optionType,
     strikePrice,
     expiry,
     pnl: 0,
     createdAt: now,
-    executedAt: now,
+    executedAt: fillNow ? now : undefined,
   };
 
   // Insert trade
@@ -354,19 +451,144 @@ export async function placeOrder(params: {
   const result = await trades.insertOne(trade);
   trade._id = result.insertedId;
 
-  // Update positions
-  await updatePosition(uid, trade);
+  if (!fillNow) {
+    // Resting LIMIT: reserve BUY margin; SELL only reserves qty (checked above).
+    let newBalance = currentBalance;
+    if (side === "BUY") {
+      const reserve = marginReq + brokerage;
+      const updatedUser = await users.findOneAndUpdate(
+        { _id: uid },
+        { $inc: { tradingBalance: -reserve } },
+        { returnDocument: "after" },
+      );
+      newBalance = Number(updatedUser?.tradingBalance ?? currentBalance - reserve);
+    }
+    return { trade, newBalance };
+  }
 
-  // Balance delta: BUY deducts (margin + brokerage), SELL credits (proceeds − brokerage)
-  const delta = side === "BUY" ? -(marginReq + brokerage) : totalValue - brokerage;
-  const updatedUser = await users.findOneAndUpdate(
-    { _id: uid },
-    { $inc: { tradingBalance: delta } },
-    { returnDocument: "after" },
-  );
-  const newBalance = Number(updatedUser?.tradingBalance ?? currentBalance + delta);
-
+  const newBalance = await settleExecutedTrade(trade);
   return { trade, newBalance };
+}
+
+/**
+ * Fill resting LIMIT orders whose price has been reached.
+ * Safe to call often — atomically claims each PENDING order before settling.
+ */
+export async function matchPendingLimitOrders(userId?: string): Promise<number> {
+  const trades = await tradesCol();
+  const filter: Record<string, unknown> = {
+    status: "PENDING",
+    orderType: "LIMIT",
+  };
+  if (userId) filter.userId = new ObjectId(userId);
+
+  const pending = await trades.find(filter).sort({ createdAt: 1 }).toArray();
+  if (!pending.length) return 0;
+
+  let filled = 0;
+  for (const order of pending) {
+    if (!order.limitPrice || order.limitPrice <= 0) continue;
+    if (!isMarketOpen(order.exchange)) continue;
+
+    let ltp: number;
+    try {
+      ltp = await fetchLTP(order.symbol, order.exchange);
+    } catch {
+      continue;
+    }
+
+    if (!isLimitMarketable(order.side, ltp, order.limitPrice)) continue;
+
+    // Claim the order so concurrent matchers don't double-fill
+    const claimed = await trades.findOneAndUpdate(
+      { _id: order._id, status: "PENDING" },
+      {
+        $set: {
+          status: "EXECUTED",
+          price: ltp,
+          totalValue: ltp * order.qty,
+          segmentKey: "history",
+          executedAt: new Date(),
+        },
+      },
+      { returnDocument: "after" },
+    );
+    if (!claimed) continue;
+
+    const reservedAmount =
+      order.side === "BUY"
+        ? order.price * order.qty * marginFactor(order.productType, !!order.optionType) +
+          brokerageEstimate(
+            order.price * order.qty,
+            order.productType,
+            !!order.optionType,
+          )
+        : undefined;
+
+    try {
+      await settleExecutedTrade(claimed, {
+        balanceAlreadyApplied: order.side === "BUY",
+        reservedAmount,
+      });
+      filled += 1;
+    } catch (err) {
+      // Roll back to PENDING if settlement fails (e.g. position vanished)
+      console.error("[trades] matchPendingLimitOrders settle failed", err);
+      await trades.updateOne(
+        { _id: order._id },
+        {
+          $set: {
+            status: "PENDING",
+            price: order.price,
+            totalValue: order.totalValue,
+            segmentKey: "openOrders",
+          },
+          $unset: { executedAt: "" },
+        },
+      );
+    }
+  }
+  return filled;
+}
+
+/** Cancel a resting PENDING limit order and refund any reserved BUY margin. */
+export async function cancelPendingOrder(
+  userId: string,
+  tradeId: string,
+): Promise<{ newBalance: number }> {
+  const uid = new ObjectId(userId);
+  const trades = await tradesCol();
+  const order = await trades.findOneAndUpdate(
+    {
+      _id: new ObjectId(tradeId),
+      userId: uid,
+      status: "PENDING",
+      orderType: "LIMIT",
+    },
+    { $set: { status: "CANCELLED", segmentKey: "history" } },
+    { returnDocument: "before" },
+  );
+  if (!order) throw new Error("Pending order not found");
+
+  const db = await getDb();
+  const users = db.collection("users");
+  const user = await users.findOne({ _id: uid });
+  let newBalance = Number(user?.tradingBalance ?? 0);
+
+  if (order.side === "BUY") {
+    const isOption = !!order.optionType;
+    const reserved =
+      order.price * order.qty * marginFactor(order.productType, isOption) +
+      brokerageEstimate(order.price * order.qty, order.productType, isOption);
+    const updated = await users.findOneAndUpdate(
+      { _id: uid },
+      { $inc: { tradingBalance: reserved } },
+      { returnDocument: "after" },
+    );
+    newBalance = Number(updated?.tradingBalance ?? newBalance + reserved);
+  }
+
+  return { newBalance };
 }
 
 /** Update position after a trade. */
@@ -642,6 +864,12 @@ async function injectLiveLtp(rows: OrderRowEffective[]): Promise<OrderRowEffecti
 
 /** Get user's open positions with live P&L (real + admin scoped-config rows). */
 export async function getPositions(userId: string) {
+  // Fill any resting limits whose price has been reached before returning positions
+  try {
+    await matchPendingLimitOrders(userId);
+  } catch (err) {
+    console.error("[trades] matchPendingLimitOrders from getPositions", err);
+  }
   const real = await getRealPositions(userId);
   const adminRows = await loadAdminRowsForUser(userId);
   const positionRows = await injectLiveLtp(
@@ -670,6 +898,11 @@ export async function getPositions(userId: string) {
 
 /** Get user's trade history (real + admin scoped-config rows). */
 export async function getTradeHistory(userId: string, limit = 50) {
+  try {
+    await matchPendingLimitOrders(userId);
+  } catch (err) {
+    console.error("[trades] matchPendingLimitOrders from getTradeHistory", err);
+  }
   const trades = await tradesCol();
   const realDocs = await trades
     .find({ userId: new ObjectId(userId) })
@@ -710,6 +943,11 @@ export async function getTradeHistory(userId: string, limit = 50) {
 /** Get holdings (long positions in CNC) — real + admin "Delivery/CNC BUY" rows. */
 export async function getHoldings(userId: string) {
   console.log("[trades:bridge] getHoldings start", { userId });
+  try {
+    await matchPendingLimitOrders(userId);
+  } catch (err) {
+    console.error("[trades] matchPendingLimitOrders from getHoldings", err);
+  }
   const positions = await positionsCol();
   const docs = await positions
     .find({

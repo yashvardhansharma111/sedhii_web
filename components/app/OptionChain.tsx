@@ -58,8 +58,9 @@ function formatExpiry(exp: string) {
 }
 
 function formatSignedPct(pct: number | undefined) {
-  if (pct == null || !Number.isFinite(pct)) return "—";
-  const sign = pct >= 0 ? "+" : "";
+  // Never show 0 / +0.00% in the chain
+  if (pct == null || !Number.isFinite(pct) || pct === 0) return "—";
+  const sign = pct > 0 ? "+" : "";
   return `${sign}${pct.toFixed(2)}%`;
 }
 
@@ -67,6 +68,66 @@ function formatAgo(ms: number) {
   if (ms < 5000) return "now";
   if (ms < 60000) return `${Math.floor(ms / 1000)}s ago`;
   return `${Math.floor(ms / 60000)}m ago`;
+}
+
+function formatPrice(n: number | undefined | null) {
+  if (n == null || !Number.isFinite(n) || n <= 0) return "—";
+  return n.toFixed(2);
+}
+
+/** Keep last-good prices when a refresh returns 0 / missing quotes. */
+function hasGoodLtp(entry?: OptionEntry | null) {
+  return !!(entry && Number.isFinite(entry.ltp) && entry.ltp > 0);
+}
+
+function mergeOptionSide(
+  next?: OptionEntry,
+  prev?: OptionEntry,
+): OptionEntry | undefined {
+  if (!next && !prev) return next;
+  if (!hasGoodLtp(next) && hasGoodLtp(prev)) {
+    return {
+      ...prev!,
+      ...next,
+      ltp: prev!.ltp,
+      change:
+        Number.isFinite(next?.change) && next!.change !== 0
+          ? next!.change
+          : prev!.change,
+      changePct:
+        Number.isFinite(next?.changePct) && next!.changePct !== 0
+          ? next!.changePct
+          : prev!.changePct,
+      symbol: next?.symbol || prev!.symbol,
+      token: next?.token || prev!.token,
+      lotSize: next?.lotSize || prev!.lotSize,
+    };
+  }
+  return next || prev;
+}
+
+function mergeOptionChain(prev: ChainData | null, next: ChainData): ChainData {
+  if (!prev) return next;
+  if (!next?.chain?.length) return prev;
+
+  const prevMap = new Map(prev.chain.map((r) => [r.strike, r]));
+  const mergedChain = next.chain.map((row) => {
+    const old = prevMap.get(row.strike);
+    if (!old) return row;
+    return {
+      ...row,
+      CE: mergeOptionSide(row.CE, old.CE),
+      PE: mergeOptionSide(row.PE, old.PE),
+    };
+  });
+
+  return {
+    ...next,
+    chain: mergedChain,
+    spotPrice: next.spotPrice > 0 ? next.spotPrice : prev.spotPrice,
+    atmStrike: next.atmStrike > 0 ? next.atmStrike : prev.atmStrike,
+    expiries: next.expiries?.length ? next.expiries : prev.expiries,
+  };
 }
 
 function isMarketOpen(exchange = "NSE"): boolean {
@@ -302,7 +363,9 @@ function OrderModal({
 /*  SpotLine                                                            */
 /* ------------------------------------------------------------------ */
 function SpotLine({ spot, changePct }: { spot: number; changePct: number }) {
-  const positive = changePct >= 0;
+  if (!(spot > 0)) return null;
+  const positive = changePct > 0;
+  const showChange = Number.isFinite(changePct) && changePct !== 0;
   return (
     <div className="flex items-center px-3 my-1">
       <div className="flex-1 h-px" style={{ background: "var(--ax-text-primary)" }} />
@@ -313,7 +376,7 @@ function SpotLine({ spot, changePct }: { spot: number; changePct: number }) {
         <span className="text-xs font-bold text-white">
           {spot.toLocaleString("en-IN", { maximumFractionDigits: 2 })}
         </span>
-        {changePct ? (
+        {showChange ? (
           <span
             className="text-[10px] font-semibold"
             style={{ color: positive ? "#16C98D" : "#EF4E5B" }}
@@ -361,18 +424,18 @@ function StrikeRow({
       <div className="flex flex-col">
         <button
           type="button"
-          onClick={() => row.CE && onTrade(row, "BUY", "CE")}
-          onContextMenu={(e) => { e.preventDefault(); row.CE && onTrade(row, "SELL", "CE"); }}
+          onClick={() => hasGoodLtp(row.CE) && onTrade(row, "BUY", "CE")}
+          onContextMenu={(e) => { e.preventDefault(); hasGoodLtp(row.CE) && onTrade(row, "SELL", "CE"); }}
           className="flex flex-1 items-center px-3 py-2 transition hover:bg-sky-50 active:bg-sky-100"
           title="Click to BUY · Right-click to SELL"
         >
-          {row.CE ? (
+          {hasGoodLtp(row.CE) ? (
             <div className="flex-1">
               <p className="text-[13px] font-bold" style={{ color: "#16C98D" }}>
-                ₹{row.CE.ltp.toFixed(2)}
+                ₹{formatPrice(row.CE!.ltp)}
               </p>
               <p className="text-[10px] font-semibold" style={{ color: "#16C98D" }}>
-                {formatSignedPct(row.CE.changePct)}
+                {formatSignedPct(row.CE!.changePct)}
               </p>
             </div>
           ) : (
@@ -405,8 +468,8 @@ function StrikeRow({
       <div className="flex flex-col">
         <button
           type="button"
-          onClick={() => row.PE && onTrade(row, "BUY", "PE")}
-          onContextMenu={(e) => { e.preventDefault(); row.PE && onTrade(row, "SELL", "PE"); }}
+          onClick={() => hasGoodLtp(row.PE) && onTrade(row, "BUY", "PE")}
+          onContextMenu={(e) => { e.preventDefault(); hasGoodLtp(row.PE) && onTrade(row, "SELL", "PE"); }}
           className="flex flex-1 items-center px-3 py-2 transition hover:bg-rose-50 active:bg-rose-100"
           title="Click to BUY · Right-click to SELL"
         >
@@ -419,13 +482,13 @@ function StrikeRow({
               }}
             />
           </div>
-          {row.PE ? (
+          {hasGoodLtp(row.PE) ? (
             <div className="flex-1 text-right">
               <p className="text-[13px] font-bold" style={{ color: "#EF4E5B" }}>
-                ₹{row.PE.ltp.toFixed(2)}
+                ₹{formatPrice(row.PE!.ltp)}
               </p>
               <p className="text-[10px] font-semibold" style={{ color: "#EF4E5B" }}>
-                {formatSignedPct(row.PE.changePct)}
+                {formatSignedPct(row.PE!.changePct)}
               </p>
             </div>
           ) : (
@@ -461,34 +524,18 @@ export function OptionChain({
 
   const atmRowRef = useRef<HTMLDivElement | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const inFlightRef = useRef(false);
 
   const load = useCallback(
     async (expiry: string, silent = false) => {
+      if (silent && inFlightRef.current) return;
+      inFlightRef.current = true;
       if (!silent) { setLoading(true); setError(null); }
       else setRefreshing(true);
       try {
         const res = await fetchChain(symbol, exchange, expiry);
-        // During silent refresh, preserve previous non-zero LTPs — prevents
-        // flash-to-zero when a batch quote transiently returns 0
         if (silent) {
-          setData((prev) => {
-            if (!prev) return res;
-            const prevMap = new Map(prev.chain.map((r) => [r.strike, r]));
-            const mergedChain = res.chain.map((row) => {
-              const old = prevMap.get(row.strike);
-              if (!old) return row;
-              return {
-                ...row,
-                CE: row.CE && old.CE && row.CE.ltp === 0 && old.CE.ltp !== 0
-                  ? { ...row.CE, ltp: old.CE.ltp, changePct: old.CE.changePct }
-                  : row.CE,
-                PE: row.PE && old.PE && row.PE.ltp === 0 && old.PE.ltp !== 0
-                  ? { ...row.PE, ltp: old.PE.ltp, changePct: old.PE.changePct }
-                  : row.PE,
-              };
-            });
-            return { ...res, chain: mergedChain };
-          });
+          setData((prev) => mergeOptionChain(prev, res));
         } else {
           setData(res);
         }
@@ -497,8 +544,10 @@ export function OptionChain({
         setPulse(true);
         setTimeout(() => setPulse(false), 600);
       } catch (e) {
+        // Keep previous chain on refresh failure — never wipe to zeros
         if (!silent) setError(e instanceof Error ? e.message : "Failed to load");
       } finally {
+        inFlightRef.current = false;
         setLoading(false);
         setRefreshing(false);
       }
@@ -528,7 +577,7 @@ export function OptionChain({
 
   function openOrder(row: ChainRow, side: "BUY" | "SELL", type: "CE" | "PE") {
     const entry = type === "CE" ? row.CE : row.PE;
-    if (!entry || !data) return;
+    if (!hasGoodLtp(entry) || !data) return;
     setOrderTarget({
       symbol: entry.symbol,
       exchange,

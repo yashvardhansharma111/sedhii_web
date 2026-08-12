@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
@@ -141,13 +141,13 @@ export default function SignupPage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/icon.jpeg"
-            alt="Capstockx"
+            alt="Grow Capital"
             className="h-12 w-12 rounded-2xl object-contain"
             style={{ boxShadow: "0 0 0 1px rgba(220,38,38,0.15)" }}
           />
           <div className="leading-none">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.18em]" style={{ color: "var(--ax-primary)" }}>Cap</p>
-            <p className="text-base font-bold" style={{ color: "var(--ax-text-primary)" }}>Stocks</p>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.18em]" style={{ color: "var(--ax-primary)" }}>Grow</p>
+            <p className="text-base font-bold" style={{ color: "var(--ax-text-primary)" }}>Capital</p>
           </div>
         </div>
 
@@ -272,7 +272,7 @@ export default function SignupPage() {
 
             <UploadField
               label="Signature"
-              helper="Optional · image only"
+              helper="Optional Â· image only"
               accept="image/*"
               file={signature}
               onFile={setSignature}
@@ -328,7 +328,7 @@ export default function SignupPage() {
                   color: "var(--ax-positive)",
                 }}
               >
-                ✓ Email and phone verified — you can submit the form.
+                ? Email and phone verified Â— you can submit the form.
               </div>
             )}
 
@@ -362,7 +362,7 @@ export default function SignupPage() {
               style={{ backgroundColor: "var(--ax-primary)" }}
             >
               {busy
-                ? "Submitting…"
+                ? "SubmittingÂ…"
                 : !emailVerified || !phoneVerified
                   ? "Verify email & phone first"
                   : "Submit request"}
@@ -400,7 +400,7 @@ function StatusChip({ done, label }: { done: boolean; label: string }) {
             }
       }
     >
-      {done ? `✓ ${label} verified` : `• ${label} pending`}
+      {done ? `? ${label} verified` : `Â ${label} pending`}
     </span>
   );
 }
@@ -445,7 +445,7 @@ function VerifyField({
   }, [cooldown]);
 
   useEffect(() => {
-    // Upstream value changed — invalidate any pending OTP UI.
+    // Upstream value changed Â— invalidate any pending OTP UI.
     setSent(false);
     setOtp("");
     setErr(null);
@@ -566,7 +566,7 @@ function VerifyField({
             }}
           >
             {sending
-              ? "Sending…"
+              ? "SendingÂ…"
               : cooldown > 0
                 ? `${cooldown}s`
                 : sent
@@ -601,7 +601,7 @@ function VerifyField({
             className="whitespace-nowrap rounded-xl px-4 text-xs font-bold text-white transition disabled:opacity-60"
             style={{ backgroundColor: "var(--ax-primary)" }}
           >
-            {verifying ? "Verifying…" : "Verify"}
+            {verifying ? "VerifyingÂ…" : "Verify"}
           </button>
         </div>
       ) : null}

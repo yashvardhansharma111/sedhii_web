@@ -1,10 +1,10 @@
-﻿@import "tailwindcss";
+@import "tailwindcss";
 
 :root {
   --background: #f8fafc;
   --foreground: #0f172a;
 
-  /* Capstocks palette — mirrors stock-app/constants/theme.js */
+  /* Grow Capital palette — mirrors stock-app/constants/theme.js */
   --ax-primary: #DC2626;
   --ax-primary-deep: #B91C1C;
   --ax-primary-light: #FCA5A5;
@@ -15,7 +15,7 @@
   --ax-card-muted: #f1f5f9;
   --ax-border: #e2e8f0;
   --ax-border-light: #fff1f2;
-  /* P&L positive — cyan so it reads as positive while staying in the blue family. */
+  /* P&L positive â€” cyan so it reads as positive while staying in the blue family. */
   --ax-positive: #06B6D4;
   --ax-negative: #e55461;
   --ax-tab-inactive: #94a3b8;
@@ -59,7 +59,7 @@ body {
   border-radius: 16px;
 }
 
-/* Capstocks brand utilities */
+/* Grow Capital brand utilities */
 .cs-gradient-text {
   background: linear-gradient(90deg, #DC2626 0%, #991B1B 50%, #DC2626 100%);
   background-size: 200% auto;

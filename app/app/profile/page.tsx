@@ -1,11 +1,11 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { FiBookOpen, FiChevronRight, FiDollarSign, FiEdit3, FiMail, FiUser } from "react-icons/fi";
 import { useAppData } from "@/components/app/AppDataContext";
 import { formatINR } from "@/components/app/format";
 
-const SUPPORT_EMAIL = "support@capstockx.in";
+const SUPPORT_EMAIL = "support@growcapitalco.com";
 
 const ROWS = [
   {

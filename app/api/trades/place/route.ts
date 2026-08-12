@@ -55,8 +55,14 @@ export async function POST(request: NextRequest) {
       expiry,
     });
 
+    const isPending = trade.status === "PENDING";
+    const px = (trade.limitPrice ?? trade.price).toFixed(2);
+    const message = isPending
+      ? `LIMIT ${side} ${qty} ${symbol} @ ₹${px} placed — waiting for market`
+      : `${side} ${qty} ${symbol} @ ₹${trade.price.toFixed(2)}`;
+
     return NextResponse.json({
-      message: `${side} ${qty} ${symbol} @ ₹${trade.price.toFixed(2)}`,
+      message,
       trade: {
         id: trade._id?.toString(),
         symbol: trade.symbol,
@@ -64,6 +70,8 @@ export async function POST(request: NextRequest) {
         side: trade.side,
         qty: trade.qty,
         price: trade.price,
+        limitPrice: trade.limitPrice,
+        orderType: trade.orderType,
         totalValue: trade.totalValue,
         status: trade.status,
         executedAt: trade.executedAt,
@@ -72,10 +80,14 @@ export async function POST(request: NextRequest) {
     });
   } catch (err: any) {
     console.error("[trades/place]", err);
-    const status = err.message?.includes("Insufficient") ? 400 : 500;
-    return NextResponse.json(
-      { message: err.message || "Order failed" },
-      { status },
-    );
+    const msg = err.message || "Order failed";
+    const status =
+      msg.includes("Insufficient") ||
+      msg.includes("Limit price") ||
+      msg.includes("Market is closed") ||
+      msg.includes("Quantity")
+        ? 400
+        : 500;
+    return NextResponse.json({ message: msg }, { status });
   }
 }

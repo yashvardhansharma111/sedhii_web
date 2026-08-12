@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -42,13 +42,13 @@ export default function AdminLoginPage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/icon.jpeg"
-            alt="Capstockx"
+            alt="Grow Capital"
             className="h-14 w-14 rounded-2xl object-contain"
             style={{ boxShadow: "0 0 0 1px rgba(220,38,38,0.15)" }}
           />
           <div className="leading-none">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.18em]" style={{ color: "#DC2626" }}>Cap</p>
-            <p className="text-lg font-bold text-slate-900">Stocks</p>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.18em]" style={{ color: "#DC2626" }}>Grow</p>
+            <p className="text-lg font-bold text-slate-900">Capital</p>
           </div>
         </div>
 
@@ -68,7 +68,7 @@ export default function AdminLoginPage() {
                 value={pin}
                 onChange={(e) => setPin(e.target.value)}
                 className="w-full rounded-xl border border-slate-200 px-4 py-3 text-slate-900 outline-none ring-red-600/20 focus:border-red-600 focus:ring-4"
-                placeholder="••••••••"
+                placeholder=""
                 autoComplete="off"
               />
               <button

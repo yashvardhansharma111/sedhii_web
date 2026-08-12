@@ -21,6 +21,9 @@ type Row = {
   avgPrice?: number;
   ltp?: number;
   price?: number;
+  limitPrice?: number;
+  orderType?: string;
+  status?: string;
   pnl?: number;
   pnlPct?: number;
   optionType?: string;
@@ -66,6 +69,7 @@ export default function OrdersPage() {
   const [err, setErr] = useState<string | null>(null);
   const [downloading, setDownloading] = useState(false);
   const [exitTarget, setSellTarget] = useState<Row | null>(null);
+  const [cancellingId, setCancellingId] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setErr(null);
@@ -113,8 +117,35 @@ export default function OrdersPage() {
     }
   }, []);
 
+  async function cancelPending(tradeId: string) {
+    setCancellingId(tradeId);
+    try {
+      const res = await fetch("/api/trades/cancel", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tradeId }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Cancel failed");
+      await load();
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "Cancel failed");
+    } finally {
+      setCancellingId(null);
+    }
+  }
+
   useEffect(() => {
     void load();
+  }, [load]);
+
+  // Poll so resting LIMIT orders fill when LTP reaches the target
+  useEffect(() => {
+    const id = setInterval(() => {
+      void load();
+    }, 5000);
+    return () => clearInterval(id);
   }, [load]);
 
   const rows = useMemo(() => {
@@ -276,11 +307,13 @@ export default function OrdersPage() {
           style={{ borderColor: "var(--ax-border)" }}>
           {rows.map((item, idx) => {
             const isOption = !!item.optionType;
+            const isPending = item.status === "PENDING";
             const pnl = Number(item.pnl || 0);
             const positiveRow = pnl >= 0;
             const pnlPctVal =
               item.pnlPct != null ? Number(item.pnlPct) : null;
             const ltp = Number(item.ltp ?? item.price ?? 0);
+            const limitPx = Number(item.limitPrice ?? item.price ?? 0);
             const title = isOption
               ? `${item.symbol || ""} ${item.strikePrice ?? ""}`
               : item.symbol || "—";
@@ -308,6 +341,17 @@ export default function OrdersPage() {
                         text={(item.side || "BUY").toUpperCase()}
                         variant={(item.side || "BUY").toUpperCase() as "BUY" | "SELL"}
                       />
+                      {isPending ? (
+                        <span
+                          className="rounded px-1.5 py-0.5 text-[9px] font-bold tracking-wider"
+                          style={{
+                            backgroundColor: "rgba(245, 158, 11, 0.15)",
+                            color: "#D97706",
+                          }}
+                        >
+                          PENDING
+                        </span>
+                      ) : null}
                     </div>
                     <p
                       className="mt-1 text-[11px]"
@@ -318,6 +362,7 @@ export default function OrdersPage() {
                       {!isOption && item.productType
                         ? ` · ${item.productType}`
                         : ""}
+                      {item.orderType === "LIMIT" ? " · LIMIT" : ""}
                     </p>
                   </div>
                   <div className="text-right">
@@ -325,13 +370,13 @@ export default function OrdersPage() {
                       className="text-sm font-bold"
                       style={{ color: "var(--ax-text-primary)" }}
                     >
-                      {formatINR(ltp)}
+                      {formatINR(isPending ? limitPx : ltp)}
                     </p>
                     <p
                       className="text-[9px] font-medium tracking-wider"
                       style={{ color: "#94A3B8" }}
                     >
-                      LTP
+                      {isPending ? "LIMIT" : "LTP"}
                     </p>
                   </div>
                 </div>
@@ -341,35 +386,46 @@ export default function OrdersPage() {
                 >
                   <Cell label="QTY" value={String(item.qty || 0)} />
                   <Cell
-                    label="AVG"
-                    value={formatINR(item.avgPrice ?? item.price)}
+                    label={isPending ? "LIMIT" : "AVG"}
+                    value={formatINR(
+                      isPending ? limitPx : (item.avgPrice ?? item.price),
+                    )}
                   />
                   <div className="text-right">
                     <p
                       className="text-[9px] font-medium uppercase tracking-wider"
                       style={{ color: "var(--ax-text-secondary)" }}
                     >
-                      P&amp;L
+                      {isPending ? "STATUS" : "P&L"}
                     </p>
-                    <p
-                      className="mt-0.5 flex items-center justify-end gap-1 text-sm font-bold"
-                      style={{
-                        color: positiveRow
-                          ? "var(--ax-positive)"
-                          : "var(--ax-negative)",
-                      }}
-                    >
-                      {positiveRow ? (
-                        <FiTrendingUp className="h-3 w-3" />
-                      ) : (
-                        <FiTrendingDown className="h-3 w-3" />
-                      )}
-                      {positiveRow ? "+" : ""}
-                      {formatINR(pnl)}
-                      {pnlPctVal != null
-                        ? ` (${positiveRow ? "+" : ""}${pnlPctVal.toFixed(1)}%)`
-                        : ""}
-                    </p>
+                    {isPending ? (
+                      <p
+                        className="mt-0.5 text-sm font-bold"
+                        style={{ color: "#D97706" }}
+                      >
+                        Waiting
+                      </p>
+                    ) : (
+                      <p
+                        className="mt-0.5 flex items-center justify-end gap-1 text-sm font-bold"
+                        style={{
+                          color: positiveRow
+                            ? "var(--ax-positive)"
+                            : "var(--ax-negative)",
+                        }}
+                      >
+                        {positiveRow ? (
+                          <FiTrendingUp className="h-3 w-3" />
+                        ) : (
+                          <FiTrendingDown className="h-3 w-3" />
+                        )}
+                        {positiveRow ? "+" : ""}
+                        {formatINR(pnl)}
+                        {pnlPctVal != null
+                          ? ` (${positiveRow ? "+" : ""}${pnlPctVal.toFixed(1)}%)`
+                          : ""}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -386,6 +442,22 @@ export default function OrdersPage() {
                     </button>
                   </div>
                 )}
+                {activeFilter === "history" && isPending && item.id ? (
+                  <div className="mt-3 flex justify-end border-t pt-3" style={{ borderColor: "#F1F5F9" }}>
+                    <button
+                      type="button"
+                      disabled={cancellingId === item.id}
+                      onClick={() => void cancelPending(item.id!)}
+                      className="rounded-xl px-5 py-2 text-xs font-bold tracking-wide transition hover:opacity-90 disabled:opacity-50"
+                      style={{
+                        background: "#F1F5F9",
+                        color: "var(--ax-text-primary)",
+                      }}
+                    >
+                      {cancellingId === item.id ? "Cancelling…" : "Cancel limit"}
+                    </button>
+                  </div>
+                ) : null}
               </div>
             );
           })}

@@ -39,6 +39,7 @@ export async function GET(request: NextRequest) {
           side: t.side,
           qty: t.qty,
           price: t.price,
+          limitPrice: (t as any).limitPrice,
           avgPrice: adminPrices?.avgPrice ?? (t as any).avgPrice ?? t.price,
           ltp: adminPrices?.ltp ?? t.price,
           orderType: t.orderType,

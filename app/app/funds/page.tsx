@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
@@ -200,7 +200,7 @@ export default function FundsPage() {
   const upiUrl = useMemo(() => {
     if (!paymentMeta?.upiId || !numericAmount) return null;
     const pa = paymentMeta.upiId;
-    const pn = encodeURIComponent(paymentMeta.accountHolder ?? "Capstockx");
+    const pn = encodeURIComponent(paymentMeta.accountHolder ?? "Grow Capital");
     const tn = encodeURIComponent(note || `Fund deposit for ${user?.clientId ?? user?.email ?? "user"}`);
     const am = numericAmount.toFixed(2);
     const tr = `CSX${Date.now()}`;   // unique transaction reference
@@ -364,7 +364,7 @@ export default function FundsPage() {
             required
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            placeholder="₹ Enter amount"
+            placeholder="? Enter amount"
             className="w-full bg-transparent text-base outline-none"
             style={{ color: "var(--ax-text-primary)" }}
           />
@@ -461,7 +461,7 @@ export default function FundsPage() {
                       />
                     </div>
                     <p className="text-center text-xs font-semibold" style={{ color: "var(--ax-primary)" }}>
-                      ₹{numericAmount.toFixed(2)} to {paymentMeta.upiId}
+                      ?{numericAmount.toFixed(2)} to {paymentMeta.upiId}
                     </p>
                     <button
                       type="button"

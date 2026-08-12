@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -30,7 +30,7 @@ import {
 
 const APK_URL: string =
   "https://www.dropbox.com/scl/fi/l4f4mf0t3sj1m523jkl4n/Capstockx.apk?rlkey=wc0pe1tj3k7czups3b5ph2pae&st=9rs3y95m&dl=1";
-const SUPPORT_EMAIL = "support@capstockx.in";
+const SUPPORT_EMAIL = "support@growcapitalco.com";
 
 const TICKER = [
   { symbol: "NIFTY 50", value: "24,583.10", changePct: 0.42 },
@@ -48,7 +48,7 @@ const TICKER = [
 const FAQS: { q: string; a: string }[] = [
   {
     q: "How do I get an account?",
-    a: "Fill out the signup form with your KYC details (PAN, Aadhaar, bank, signature). The Capstockx team reviews each request and emails your Client ID and password from support@capstockx.in once approved.",
+    a: "Fill out the signup form with your KYC details (PAN, Aadhaar, bank, signature). The Grow Capital team reviews each request and emails your Client ID and password from support@growcapitalco.com once approved.",
   },
   {
     q: "How fresh is the market data?",
@@ -60,7 +60,7 @@ const FAQS: { q: string; a: string }[] = [
   },
   {
     q: "What markets are supported?",
-    a: "NSE (equities + indices), BSE (SENSEX), and MCX (gold, silver, crude, natural gas, copper and more) — plus mutual funds with live NAV.",
+    a: "NSE (equities + indices), BSE (SENSEX), and MCX (gold, silver, crude, natural gas, copper and more)  plus mutual funds with live NAV.",
   },
   {
     q: "Where can I reach support?",
@@ -194,7 +194,7 @@ export default function HomePage() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/icon.jpeg"
-              alt="Capstockx"
+              alt="Grow Capital"
               className="h-10 w-10 rounded-xl object-contain transition-transform group-hover:scale-105"
               style={{ boxShadow: "0 0 20px rgba(220,38,38,0.25)" }}
             />
@@ -203,10 +203,10 @@ export default function HomePage() {
                 className="text-[10px] font-semibold uppercase tracking-[0.18em]"
                 style={{ color: D.primary }}
               >
-                Cap
+                Grow
               </p>
               <p className="mt-0.5 text-base font-bold" style={{ color: D.text }}>
-                Stocks
+                Capital
               </p>
             </div>
           </Link>
@@ -303,7 +303,7 @@ export default function HomePage() {
                 className="inline-block h-1.5 w-1.5 animate-pulse rounded-full"
                 style={{ backgroundColor: D.primary }}
               />
-              LIVE MARKETS · NSE · BSE · MCX
+              LIVE MARKETS  NSE  BSE  MCX
             </span>
 
             <h1
@@ -329,8 +329,8 @@ export default function HomePage() {
               className="mt-5 max-w-xl text-base leading-relaxed sm:text-lg"
               style={{ color: D.textSec }}
             >
-              Live charts, orders, mutual funds and a running ledger — all in
-              one place. Sign in on the web, or take Capstockx with you on
+              Live charts, orders, mutual funds and a running ledger  all in
+              one place. Sign in on the web, or take Grow Capital with you on
               Android.{" "}
               <span className="font-semibold" style={{ color: D.text }}>
                 One account. Every market.
@@ -375,7 +375,7 @@ export default function HomePage() {
               </div>
               <div className="flex items-center gap-1.5">
                 <FiZap className="h-3.5 w-3.5" style={{ color: D.primary }} />
-                <span>Live ticks · sub-second</span>
+                <span>Live ticks  sub-second</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <FiHeadphones
@@ -389,7 +389,7 @@ export default function HomePage() {
             <ul className="mt-8 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
               {[
                 "Real-time candlestick charts",
-                "Positions · holdings · ledger",
+                "Positions  holdings  ledger",
                 "Admin-approved onboarding",
                 "Mutual funds in one view",
               ].map((f) => (
@@ -511,7 +511,7 @@ export default function HomePage() {
                         backgroundColor: D.panelMuted,
                         color: D.text,
                       }}
-                      placeholder="••••••••"
+                      placeholder=""
                       autoComplete="current-password"
                     />
                   </div>
@@ -540,7 +540,7 @@ export default function HomePage() {
                   }}
                 >
                   {loading ? (
-                    "Signing in…"
+                    "Signing in"
                   ) : (
                     <>
                       Continue
@@ -558,13 +558,13 @@ export default function HomePage() {
                   color: D.textSec,
                 }}
               >
-                New to Capstockx?{" "}
+                New to Grow Capital?{" "}
                 <Link
                   href="/signup"
                   className="font-semibold"
                   style={{ color: D.primary }}
                 >
-                  Request account →
+                  Request account ?
                 </Link>
               </div>
             </div>
@@ -577,9 +577,9 @@ export default function HomePage() {
           style={{ borderColor: D.border, backgroundColor: D.panel }}
         >
           <div className="mx-auto grid max-w-6xl grid-cols-2 gap-6 px-5 py-8 text-center md:grid-cols-4 md:px-6">
-            <Stat value="3" label="Exchanges · NSE / BSE / MCX" />
+            <Stat value="3" label="Exchanges  NSE / BSE / MCX" />
             <Stat value="1,000+" label="Symbols tracked live" />
-            <Stat value="6" label="Timeframes · 1m → 1W" />
+            <Stat value="6" label="Timeframes  1m ? 1W" />
             <Stat value="< 2s" label="Tick-to-chart latency" />
           </div>
         </section>
@@ -603,7 +603,7 @@ export default function HomePage() {
               Three steps to your first trade.
             </h2>
             <p className="mt-3 text-base" style={{ color: D.textSec }}>
-              No cold onboarding. Every account is reviewed by the Capstockx
+              No cold onboarding. Every account is reviewed by the Grow Capital
               Exchange team before it goes live.
             </p>
           </div>
@@ -612,7 +612,7 @@ export default function HomePage() {
               number="01"
               icon={FiUserCheck}
               title="Request your account"
-              text="Fill in the signup form with KYC basics — name, email, phone, PAN, Aadhaar, bank and signature."
+              text="Fill in the signup form with KYC basics  name, email, phone, PAN, Aadhaar, bank and signature."
             />
             <StepCard
               number="02"
@@ -656,7 +656,7 @@ export default function HomePage() {
             <FeatureCard
               icon={FiActivity}
               title="Live charts"
-              text="Candlesticks, volume, live price line — intraday through weekly."
+              text="Candlesticks, volume, live price line  intraday through weekly."
             />
             <FeatureCard
               icon={FiBarChart2}
@@ -707,7 +707,7 @@ export default function HomePage() {
               reverse
               badge="Orders"
               title="Positions, holdings and a running ledger."
-              text="One card shows your total P&L with the invested and current figures alongside. Filter chips for positions, holdings and history — every executed order lands in the ledger."
+              text="One card shows your total P&L with the invested and current figures alongside. Filter chips for positions, holdings and history  every executed order lands in the ledger."
               bullets={[
                 "Total P&L hero with +/- color accents",
                 "Exit / sell strip on open positions",
@@ -717,10 +717,10 @@ export default function HomePage() {
             />
             <ProductRow
               badge="Markets"
-              title="Indices, funds and commodities — one place."
+              title="Indices, funds and commodities  one place."
               text="Tap an index to switch the hero chart. The Explore tab scrolls your watchlist, top gainers, top losers, mutual funds and commodity futures as horizontal cards."
               bullets={[
-                "NSE · BSE · MCX coverage out of the box",
+                "NSE  BSE  MCX coverage out of the box",
                 "Mutual-fund NAV with change % baked in",
                 "Commodities sorted by name or by today's move",
               ]}
@@ -772,7 +772,7 @@ export default function HomePage() {
                 <SecurityBullet
                   icon={FiMail}
                   title="Branded email delivery"
-                  text={`Credentials are sent from ${SUPPORT_EMAIL} — never shared.`}
+                  text={`Credentials are sent from ${SUPPORT_EMAIL}  never shared.`}
                 />
               </div>
             </div>
@@ -806,7 +806,7 @@ export default function HomePage() {
                 markets.&rdquo;
               </p>
               <p className="mt-4 text-sm font-medium" style={{ color: D.textSec }}>
-                — Capstockx team
+                — Grow Capital team
               </p>
               <div
                 className="mt-8 flex flex-wrap gap-2 border-t pt-6 text-[10px] font-semibold uppercase tracking-wider"
@@ -898,8 +898,8 @@ export default function HomePage() {
               </div>
               <div className="mt-8 grid grid-cols-3 gap-3 text-center">
                 {[
-                  { icon: FiGlobe, label: "NSE · BSE · MCX" },
-                  { icon: FiClock, label: "Live · < 2s latency" },
+                  { icon: FiGlobe, label: "NSE  BSE  MCX" },
+                  { icon: FiClock, label: "Live  < 2s latency" },
                   { icon: FiHeadphones, label: "Email support" },
                 ].map(({ icon: Icon, label }) => (
                   <div
@@ -1023,7 +1023,7 @@ export default function HomePage() {
               className="mx-auto max-w-3xl text-xl font-medium leading-relaxed sm:text-2xl"
               style={{ color: D.text }}
             >
-              Everything you need — charts, orders, funds, ledger — without
+              Everything you need  charts, orders, funds, ledger  without
               the noise. Clean on the web, equally clean on Android.
             </p>
             <div className="mt-6 flex items-center justify-center gap-3">
@@ -1035,7 +1035,7 @@ export default function HomePage() {
               </div>
               <div className="text-left">
                 <p className="text-sm font-semibold" style={{ color: D.text }}>
-                  Capstockx
+                  Grow Capital
                 </p>
                 <p className="text-xs" style={{ color: D.textSec }}>
                   Product mandate
@@ -1129,7 +1129,7 @@ export default function HomePage() {
                   Ready to get started?
                 </h3>
                 <p className="mt-2 text-sm sm:text-base" style={{ color: D.textSec }}>
-                  Request an account — the Capstockx team reviews every request
+                  Request an account — the Grow Capital team reviews every request
                   and emails credentials from {SUPPORT_EMAIL} once approved.
                 </p>
               </div>
@@ -1176,16 +1176,16 @@ export default function HomePage() {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/icon.jpeg"
-                  alt="Capstockx"
+                  alt="Grow Capital"
                   className="h-10 w-10 rounded-xl object-contain"
                 />
                 <div className="leading-none">
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.18em]" style={{ color: "#DC2626" }}>Cap</p>
-                  <p className="mt-0.5 text-lg font-bold text-slate-900">Stocks</p>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.18em]" style={{ color: "#DC2626" }}>Grow</p>
+                  <p className="mt-0.5 text-lg font-bold text-slate-900">Capital</p>
                 </div>
               </div>
               <p className="mt-5 max-w-md text-sm leading-relaxed text-slate-400">
-                Live markets, orders, mutual funds and a running ledger — on
+                Live markets, orders, mutual funds and a running ledger  on
                 web and Android, backed by the same data pipeline.
               </p>
               <a
@@ -1228,14 +1228,14 @@ export default function HomePage() {
                 <p className="font-semibold text-slate-800 text-[11px] mb-1">Main Office</p>
                 <p className="text-[10px] uppercase tracking-wide text-slate-400 mb-1">Registered &amp; Corporate</p>
                 <p>
-                  Capstockx Towers,<br />
+                  Grow Capital Towers,<br />
                   Thakaraparambu Road,<br />
                   Fort P.O, Trivandrum 695023<br />
                 </p>
                 <p className="mt-1">Ph: +91-471-4093333, 4093444</p>
-                <a href="mailto:cspl@capstockx.com" className="block hover:text-slate-900">cspl@capstockx.com</a>
+                <a href="mailto:cspl@growcapitalco.com" className="block hover:text-slate-900">cspl@growcapitalco.com</a>
                 <div className="mt-2 pt-2 border-t border-slate-100">
-                  <p className="text-[10px] uppercase tracking-wide text-slate-400 mb-0.5">Annexe 1 — Legal</p>
+                  <p className="text-[10px] uppercase tracking-wide text-slate-400 mb-0.5">Annexe 1  Legal</p>
                   <p>&ldquo;Gokulam&rdquo;, SRA-62,<br />Sreekanteswaram, Fort P.O,<br />Vanchiyoor, Trivandrum 695023, Kerala</p>
                 </div>
                 <div className="mt-2 pt-2 border-t border-slate-100">
@@ -1244,29 +1244,29 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Regional — South */}
+              {/* Regional  South */}
               <div className="space-y-3">
                 <div>
                   <p className="font-semibold text-slate-800 text-[11px] mb-1">Ernakulam</p>
                   <p>IInd Floor, 39/1728D, Tharakan House,<br />Pallimukku, Opp. Coir Board,<br />M.G. Road, Ernakulam 682016</p>
-                  <p className="mt-1">Ph: 0484–4031998, 4618558<br />Mob: 9847460187</p>
-                  <a href="mailto:kochi@capstockx.com" className="block hover:text-slate-900">kochi@capstockx.com</a>
+                  <p className="mt-1">Ph: 04844031998, 4618558<br />Mob: 9847460187</p>
+                  <a href="mailto:kochi@growcapitalco.com" className="block hover:text-slate-900">kochi@growcapitalco.com</a>
                 </div>
                 <div className="pt-2 border-t border-slate-100">
                   <p className="font-semibold text-slate-800 text-[11px] mb-1">Thrissur</p>
                   <p>Room No 41, 2nd Floor,<br />Suharsha Towers, Shornur Road,<br />Round North, Thrissur 680001</p>
-                  <p className="mt-1">Ph: 0487–2994553<br />Mob: 9349050226, 9847768658</p>
-                  <a href="mailto:thrissur@capstockx.com" className="block hover:text-slate-900">thrissur@capstockx.com</a>
+                  <p className="mt-1">Ph: 04872994553<br />Mob: 9349050226, 9847768658</p>
+                  <a href="mailto:thrissur@growcapitalco.com" className="block hover:text-slate-900">thrissur@growcapitalco.com</a>
                 </div>
               </div>
 
-              {/* Regional — North */}
+              {/* Regional  North */}
               <div className="space-y-3">
                 <div>
                   <p className="font-semibold text-slate-800 text-[11px] mb-1">Calicut</p>
                   <p>19/2096, Indus Avenue, C2 Part,<br />1st Floor, Kallai Road,<br />Calicut 673002</p>
                   <p className="mt-1">Ph: 0495-4017734, 2301734, 2951734<br />Mob: 9387440171, 9387077723</p>
-                  <a href="mailto:calicutro@capstockx.com" className="block hover:text-slate-900">calicutro@capstockx.com</a>
+                  <a href="mailto:calicutro@growcapitalco.com" className="block hover:text-slate-900">calicutro@growcapitalco.com</a>
                 </div>
               </div>
 
@@ -1276,13 +1276,13 @@ export default function HomePage() {
                   <p className="font-semibold text-slate-800 text-[11px] mb-1">Chennai</p>
                   <p>20/3 &amp; 4, Indiradevi Complex,<br />Gopalakrishna Street, T. Nagar,<br />Chennai 600017</p>
                   <p className="mt-1">Ph: 044-28156920, 28156921<br />Mob: 9791802660, 9380010870</p>
-                  <a href="mailto:chennai@capstockx.com" className="block hover:text-slate-900">chennai@capstockx.com</a>
+                  <a href="mailto:chennai@growcapitalco.com" className="block hover:text-slate-900">chennai@growcapitalco.com</a>
                 </div>
                 <div className="pt-2 border-t border-slate-100">
                   <p className="font-semibold text-slate-800 text-[11px] mb-1">Bangalore</p>
                   <p>802, Ground Floor, 9th A-Main Road,<br />Indira Nagar 1st Stage,<br />Bangalore 560038</p>
                   <p className="mt-1">Ph: 080-25287565 / 25287566<br />Mob: 9343686898, 9379585700</p>
-                  <a href="mailto:bangalore@capstockx.com" className="block hover:text-slate-900">bangalore@capstockx.com</a>
+                  <a href="mailto:bangalore@growcapitalco.com" className="block hover:text-slate-900">bangalore@growcapitalco.com</a>
                 </div>
               </div>
 
@@ -1298,7 +1298,7 @@ export default function HomePage() {
                   <span className="text-slate-600 font-medium">Members in:</span> NSE, BSE, MCX<br />
                   <span className="text-slate-600 font-medium">DP:</span> CDSL &nbsp;|&nbsp; Portfolio Manager<br />
                   <span className="text-slate-600 font-medium">Helpdesk:</span>{" "}
-                  <a href="mailto:helpdesk@capstockx.com" className="hover:text-slate-900">helpdesk@capstockx.com</a>
+                  <a href="mailto:helpdesk@growcapitalco.com" className="hover:text-slate-900">helpdesk@growcapitalco.com</a>
                 </p>
               </div>
               <div>
@@ -1315,11 +1315,11 @@ export default function HomePage() {
                 <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-2">Exchange &amp; Corporate</p>
                 <p className="text-xs text-slate-400 leading-relaxed">
                   BSE Enlisted No: <span className="text-slate-600">5189</span><br />
-                  Member ID — NSE: <span className="text-slate-600">11674</span> | BSE: <span className="text-slate-600">3086</span> | MCX: <span className="text-slate-600">55990</span><br />
+                  Member ID  NSE: <span className="text-slate-600">11674</span> | BSE: <span className="text-slate-600">3086</span> | MCX: <span className="text-slate-600">55990</span><br />
                   CIN: <span className="text-slate-600">U67120KL2001PTC014680</span><br />
                   <span className="text-slate-600 font-medium">Investor Grievances:</span>{" "}
-                  <a href="mailto:Customer.redressal@capstockxindia.com" className="hover:text-slate-900 break-all">
-                    Customer.redressal@capstockxindia.com
+                  <a href="mailto:Customer.redressal@growcapitalco.com" className="hover:text-slate-900 break-all">
+                    Customer.redressal@growcapitalco.com
                   </a>
                 </p>
               </div>
@@ -1328,7 +1328,7 @@ export default function HomePage() {
 
           {/* Bottom bar */}
           <div className="mt-6 flex flex-col items-start justify-between gap-3 border-t border-slate-100 pt-6 text-xs text-slate-400 md:flex-row md:items-center">
-            <p>© {new Date().getFullYear()} Capstockx. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} Grow Capital. All rights reserved.</p>
             <p className="max-w-xl text-center md:text-right">
               Investments in securities market are subject to market risks.
               Read all scheme related documents carefully before investing.
@@ -1553,7 +1553,7 @@ function ChartVisual() {
             style={{ backgroundColor: "#10B981" }}
           />
           <span className="font-bold tracking-wider" style={{ color: "#10B981" }}>
-            LIVE · 5m
+            LIVE  5m
           </span>
         </div>
         <span
@@ -1610,7 +1610,7 @@ function OrdersVisual() {
             Total P&amp;L
           </p>
           <p className="mt-1 text-2xl font-bold" style={{ color: "#10B981" }}>
-            +₹1,350.00
+            +?1,350.00
           </p>
           <p className="text-xs font-semibold" style={{ color: "#10B981" }}>
             +1.42%
@@ -1662,7 +1662,7 @@ function OrdersVisual() {
               className="text-sm font-bold"
               style={{ color: r.pnl >= 0 ? "#10B981" : "#F04E5A" }}
             >
-              {r.pnl >= 0 ? "+" : ""}₹{Math.abs(r.pnl).toLocaleString("en-IN")}
+              {r.pnl >= 0 ? "+" : ""}?{Math.abs(r.pnl).toLocaleString("en-IN")}
               <span className="ml-1 text-[10px]">
                 ({r.pnl >= 0 ? "+" : ""}
                 {r.pct.toFixed(1)}%)
@@ -1733,7 +1733,7 @@ function MarketsVisual() {
       >
         <span className="flex items-center gap-1">
           <FiTrendingUp className="h-3 w-3" style={{ color: "#10B981" }} />
-          5 up · 1 down
+          5 up  1 down
         </span>
         <span>Updated a moment ago</span>
       </div>
