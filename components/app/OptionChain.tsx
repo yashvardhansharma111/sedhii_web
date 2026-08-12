@@ -84,23 +84,26 @@ function mergeOptionSide(
   next?: OptionEntry,
   prev?: OptionEntry,
 ): OptionEntry | undefined {
-  if (!next && !prev) return next;
-  if (!hasGoodLtp(next) && hasGoodLtp(prev)) {
+  if (!prev) return next;
+  // Inline check — avoid type-predicate narrowing `next` to `never` here
+  const nextOk = !!(next && Number.isFinite(next.ltp) && next.ltp > 0);
+  const prevOk = Number.isFinite(prev.ltp) && prev.ltp > 0;
+  if (!nextOk && prevOk) {
     return {
-      ...prev!,
-      ...next,
-      ltp: prev!.ltp,
+      ...prev,
+      ...(next ?? {}),
+      ltp: prev.ltp,
       change:
-        Number.isFinite(next?.change) && next!.change !== 0
-          ? next!.change
-          : prev!.change,
+        next && Number.isFinite(next.change) && next.change !== 0
+          ? next.change
+          : prev.change,
       changePct:
-        Number.isFinite(next?.changePct) && next!.changePct !== 0
-          ? next!.changePct
-          : prev!.changePct,
-      symbol: next?.symbol || prev!.symbol,
-      token: next?.token || prev!.token,
-      lotSize: next?.lotSize || prev!.lotSize,
+        next && Number.isFinite(next.changePct) && next.changePct !== 0
+          ? next.changePct
+          : prev.changePct,
+      symbol: next?.symbol || prev.symbol,
+      token: next?.token || prev.token,
+      lotSize: next?.lotSize || prev.lotSize,
     };
   }
   return next || prev;
