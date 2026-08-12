@@ -29,7 +29,7 @@ import {
 } from "react-icons/fi";
 
 const APK_URL: string =
-  "https://www.dropbox.com/scl/fi/l4f4mf0t3sj1m523jkl4n/Capstockx.apk?rlkey=wc0pe1tj3k7czups3b5ph2pae&st=9rs3y95m&dl=1";
+  "https://www.dropbox.com/scl/fi/7fr0lan7dg3v8b6crdg9d/growcapital.apk?rlkey=8nj3uoq8jvhf6ms25ugkfikkd&st=qicvuryd&dl=1";
 const SUPPORT_EMAIL = "support@growcapitalco.com";
 
 const TICKER = [
