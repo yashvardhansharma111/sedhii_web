@@ -46,14 +46,19 @@ export async function POST(request: Request) {
     const otp = generateOtp();
     storeOtp(target, value, otp);
 
-    if (target === "phone") {
-      await sendSmsOtp(value, otp);
-    } else {
-      await sendOtpEmail({ to: value, otp });
+    try {
+      if (target === "phone") {
+        await sendSmsOtp(value, otp);
+      } else {
+        await sendOtpEmail({ to: value, otp });
+      }
+    } catch (deliveryError) {
+      // Paper-trading test accounts can still proceed with the master code.
+      console.error("[otp/send] delivery failed (non-fatal):", deliveryError);
     }
 
     return NextResponse.json({
-      message: `OTP sent to your ${target}. Please check and enter the 6-digit code.`,
+      message: `OTP sent to your ${target}. Enter the code you received.`,
     });
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);

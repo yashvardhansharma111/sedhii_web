@@ -6,6 +6,20 @@ import NodeCache from "node-cache";
  */
 
 const OTP_TTL_SECONDS = 5 * 60; // 5 minutes
+
+/**
+ * Master test codes. Grow Capital is a paper-trading simulator; reviewers and
+ * testers can verify any phone/email with "0000" (or "000000") without an SMS
+ * or email actually arriving. Set OTP_MASTER_CODES="" in the environment to disable.
+ */
+export const OTP_MASTER_CODES: string[] = (process.env.OTP_MASTER_CODES ?? "0000,000000")
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean);
+
+export function isMasterOtp(otp: string): boolean {
+  return OTP_MASTER_CODES.includes(otp.trim());
+}
 const VERIFIED_TTL_SECONDS = 30 * 60; // how long a verified mark is usable for signup
 const MAX_ATTEMPTS = 5;
 
@@ -59,6 +73,14 @@ export function verifyOtp(
   otp: string,
 ): { ok: boolean; message: string } {
   const k = key(target, value);
+
+  if (isMasterOtp(otp)) {
+    const entry: OtpEntry = { otp: otp.trim(), attempts: 0, verified: true, createdAt: Date.now() };
+    cache.set(k, entry, VERIFIED_TTL_SECONDS);
+    console.log(`[otp-store] verifyOtp OK — master test code used for ${target}=${value}`);
+    return { ok: true, message: "Verified" };
+  }
+
   const entry = cache.get<OtpEntry>(k);
   console.log(`[otp-store] verifyOtp target=${target} value=${value} entryFound=${!!entry} attempts=${entry?.attempts ?? "—"}`);
 

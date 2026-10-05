@@ -494,7 +494,7 @@ function VerifyField({
   async function handleVerify() {
     setErr(null);
     setMsg(null);
-    if (!/^\d{6}$/.test(otp)) {
+    if (!/^\d{4,6}$/.test(otp)) {
       setErr("Enter the 6-digit code");
       return;
     }
@@ -585,7 +585,7 @@ function VerifyField({
             onChange={(e) =>
               setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
             }
-            placeholder="6-digit OTP"
+            placeholder="OTP code"
             className="flex-1 rounded-xl border px-4 py-3 text-center text-base font-bold tracking-[0.4em] outline-none transition focus:border-[var(--ax-primary)] focus:ring-4"
             style={{
               borderColor: "var(--ax-border)",
@@ -597,7 +597,7 @@ function VerifyField({
           <button
             type="button"
             onClick={() => void handleVerify()}
-            disabled={otp.length !== 6 || verifying}
+            disabled={otp.length < 4 || verifying}
             className="whitespace-nowrap rounded-xl px-4 text-xs font-bold text-white transition disabled:opacity-60"
             style={{ backgroundColor: "var(--ax-primary)" }}
           >

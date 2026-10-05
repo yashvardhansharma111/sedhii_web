@@ -25,9 +25,9 @@ export async function POST(request: Request) {
         { status: 400 },
       );
     }
-    if (!/^\d{6}$/.test(otp)) {
+    if (!/^\d{4,6}$/.test(otp)) {
       return NextResponse.json(
-        { message: "OTP must be a 6-digit number" },
+        { message: "OTP must be a 4 to 6 digit number" },
         { status: 400 },
       );
     }
