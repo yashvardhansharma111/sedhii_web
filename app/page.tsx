@@ -1214,53 +1214,32 @@ export default function HomePage() {
                 <li><Link href="/signup" className="hover:text-slate-900">Request account</Link></li>
                 <li><Link href="/admin" className="hover:text-slate-900">Admin panel</Link></li>
                 <li><a href={`mailto:${SUPPORT_EMAIL}`} className="hover:text-slate-900">Contact support</a></li>
+                <li><Link href="/privacy" className="hover:text-slate-900">Privacy policy</Link></li>
+                <li><Link href="/delete-account" className="hover:text-slate-900">Delete account</Link></li>
               </ul>
             </div>
           </div>
 
-          {/* Regulatory info */}
-          <div className="mt-10 rounded-2xl border border-slate-100 bg-slate-50 p-6">
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              <div>
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-2">Membership</p>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  <span className="text-slate-600 font-medium">Members in:</span> NSE, BSE, MCX<br />
-                  <span className="text-slate-600 font-medium">DP:</span> CDSL &nbsp;|&nbsp; Portfolio Manager<br />
-                  <span className="text-slate-600 font-medium">Helpdesk:</span>{" "}
-                  <a href="mailto:helpdesk@growcapitalco.com" className="hover:text-slate-900">helpdesk@growcapitalco.com</a>
-                </p>
-              </div>
-              <div>
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-2">SEBI Registrations</p>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  SEBI Reg (NSE, BSE &amp; MCX): <span className="text-slate-600">INZ000165931</span><br />
-                  DP: <span className="text-slate-600">IN-DP-CDSL-203-2003</span><br />
-                  PMS: <span className="text-slate-600">INP000001066</span><br />
-                  Research Entity: <span className="text-slate-600">INH2000003109</span><br />
-                  AMFI Reg No: <span className="text-slate-600">20149</span>
-                </p>
-              </div>
-              <div>
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-2">Exchange &amp; Corporate</p>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  BSE Enlisted No: <span className="text-slate-600">5189</span><br />
-                  Member ID  NSE: <span className="text-slate-600">11674</span> | BSE: <span className="text-slate-600">3086</span> | MCX: <span className="text-slate-600">55990</span><br />
-                  CIN: <span className="text-slate-600">U67120KL2001PTC014680</span><br />
-                  <span className="text-slate-600 font-medium">Investor Grievances:</span>{" "}
-                  <a href="mailto:Customer.redressal@growcapitalco.com" className="hover:text-slate-900 break-all">
-                    Customer.redressal@growcapitalco.com
-                  </a>
-                </p>
-              </div>
-            </div>
+          {/* Paper trading disclosure */}
+          <div className="mt-10 rounded-2xl border border-red-100 bg-red-50 p-6">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-red-600 mb-2">Paper trading simulator</p>
+            <p className="text-xs leading-relaxed text-slate-600">
+              Grow Capital is a paper trading simulator for learning and practice. Every balance, order,
+              position and P&amp;L shown on the web and in the Android app is <span className="font-medium text-slate-800">virtual</span>.
+              No real money is deposited, invested or withdrawn, and no real securities are bought or sold.
+              Grow Capital is not a stockbroker, investment adviser, portfolio manager or depository participant,
+              and nothing here is investment advice.{" "}
+              <Link href="/privacy" className="font-medium text-red-600 hover:underline">Privacy policy</Link>
+              {" · "}
+              <Link href="/delete-account" className="font-medium text-red-600 hover:underline">Delete your account</Link>
+            </p>
           </div>
 
           {/* Bottom bar */}
           <div className="mt-6 flex flex-col items-start justify-between gap-3 border-t border-slate-100 pt-6 text-xs text-slate-400 md:flex-row md:items-center">
             <p>© {new Date().getFullYear()} Grow Capital. All rights reserved.</p>
             <p className="max-w-xl text-center md:text-right">
-              Investments in securities market are subject to market risks.
-              Read all scheme related documents carefully before investing.
+              Paper trading only — simulated orders with virtual funds. Not a brokerage; no real money is involved.
             </p>
           </div>
         </div>

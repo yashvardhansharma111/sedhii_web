@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Grow Capital — Trade smarter",
-  description: "Grow Capital — your gateway to India's financial markets. Web access and admin panel.",
+  title: "Grow Capital — Paper trading simulator",
+  description:
+    "Grow Capital — practise trading India's markets with virtual funds. Paper trading only; no real money is involved.",
   icons: {
     icon: [{ url: "/icon.jpg" }, { url: "/icon.jpeg" }],
     shortcut: "/icon.jpg",
