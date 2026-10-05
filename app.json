@@ -1,7 +1,7 @@
 {
   "expo": {
     "android": {
-      "package": "com.bensharma.fakestock"
+      "package": "com.growcapitalco.app"
     }
   }
 }
