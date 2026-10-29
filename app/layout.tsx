@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Grow Capital — Paper trading simulator",
+  title: "Grow Capital — Markets, derivatives & commodities",
   description:
-    "Grow Capital — practise trading India's markets with virtual funds. Paper trading only; no real money is involved.",
+    "Grow Capital — trade indices, equities, derivatives and commodities on web and Android. Orders are executed in a simulated environment.",
   icons: {
     icon: [{ url: "/icon.jpg" }, { url: "/icon.jpeg" }],
     shortcut: "/icon.jpg",

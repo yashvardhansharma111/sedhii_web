@@ -8,8 +8,7 @@ import NodeCache from "node-cache";
 const OTP_TTL_SECONDS = 5 * 60; // 5 minutes
 
 /**
- * Master test codes. Grow Capital is a paper-trading simulator; reviewers and
- * testers can verify any phone/email with "0000" (or "000000") without an SMS
+ * Master test codes. Reviewers and testers can verify any phone/email with "0000" (or "000000") without an SMS
  * or email actually arriving. Set OTP_MASTER_CODES="" in the environment to disable.
  */
 export const OTP_MASTER_CODES: string[] = (process.env.OTP_MASTER_CODES ?? "0000,000000")

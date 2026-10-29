@@ -1,5 +1,5 @@
 /**
- * Paper trading engine — manages orders, positions, and holdings in MongoDB.
+ * Order engine — manages orders, positions, and holdings in MongoDB.
  * Uses real Angel One LTP for execution prices.
  */
 import { ObjectId } from "mongodb";
@@ -315,7 +315,7 @@ async function settleExecutedTrade(
   return Number(updatedUser?.tradingBalance ?? currentBalance + delta);
 }
 
-/** Place a paper trade order with balance deduction/credit. */
+/** Place an order with balance deduction/credit. */
 export async function placeOrder(params: {
   userId: string;
   symbol: string;

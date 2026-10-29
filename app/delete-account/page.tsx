@@ -10,7 +10,7 @@ const REMOVED = [
   "Profile, Client ID and login credentials",
   "Identity details you added (PAN, Aadhaar, bank account, IFSC)",
   "Uploaded images (signature, profile photo, payment-proof screenshots)",
-  "Simulated orders, virtual balances, positions, watchlists and simulated fund requests",
+  "Orders, positions, balances, watchlists and fund requests",
 ];
 
 export default function DeleteAccountPage() {
@@ -73,10 +73,9 @@ export default function DeleteAccountPage() {
           Developer: Grow Capital · App: Grow Capital (com.growcapitalco.app)
         </p>
 
-        <div className="mt-8 rounded-2xl border border-red-200 bg-red-50 p-5 text-sm leading-relaxed text-slate-700">
-          <span className="font-semibold text-red-700">Paper trading only.</span> Grow Capital is a
-          simulator. There is no real money to withdraw before deleting — virtual balances are simply
-          erased along with your account.
+        <div className="mt-8 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-sm leading-relaxed text-slate-600">
+          <span className="font-semibold text-slate-800">Before you delete.</span> Withdraw any remaining
+          balance and allow pending fund requests to complete. Deletion is permanent and cannot be undone.
         </div>
 
         {done ? (
@@ -196,7 +195,7 @@ export default function DeleteAccountPage() {
         </section>
 
         <footer className="mt-14 border-t border-slate-100 pt-6 text-xs text-slate-400">
-          © {new Date().getFullYear()} Grow Capital. Paper trading simulator — not a brokerage.
+          © {new Date().getFullYear()} Grow Capital. All rights reserved.
         </footer>
       </div>
     </main>

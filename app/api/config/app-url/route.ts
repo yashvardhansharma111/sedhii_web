@@ -13,7 +13,7 @@ export async function GET(request: Request) {
   const apiUrl = fromEnv || origin;
 
   return NextResponse.json(
-    { apiUrl, paperTrading: true },
+    { apiUrl },
     { headers: { "Cache-Control": "public, max-age=300" } },
   );
 }

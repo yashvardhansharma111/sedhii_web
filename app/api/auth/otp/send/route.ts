@@ -53,7 +53,7 @@ export async function POST(request: Request) {
         await sendOtpEmail({ to: value, otp });
       }
     } catch (deliveryError) {
-      // Paper-trading test accounts can still proceed with the master code.
+      // Test accounts can still proceed with the master code.
       console.error("[otp/send] delivery failed (non-fatal):", deliveryError);
     }
 

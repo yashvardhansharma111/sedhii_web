@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Privacy Policy — Grow Capital",
   description:
-    "How the Grow Capital paper trading simulator collects, uses and deletes your data.",
+    "How Grow Capital collects, uses and deletes your data.",
 };
 
 const LAST_UPDATED = "5 October 2026";
@@ -16,16 +16,16 @@ const SECTIONS: { title: string; items?: string[]; text?: string[] }[] = [
     title: "1. Who we are",
     text: [
       'Grow Capital ("we", "us", "our") operates the Grow Capital mobile application and the website growcapitalco.com.',
-      "Grow Capital is a paper trading simulator. It lets you practise trading with virtual funds against market data. It is not a stockbroker, investment adviser or depository participant, does not execute real orders, and does not hold client money or securities.",
+      "Orders placed on Grow Capital are executed in a simulated environment and are not routed to any stock exchange. Grow Capital is not a SEBI-registered stockbroker, investment adviser or depository participant.",
     ],
   },
   {
     title: "2. Information we collect",
     items: [
       "Account details you provide when requesting an account: full name, email address, phone number, date of birth and a signature image used to verify your request.",
-      "Optional identity details you choose to add to your profile (PAN, Aadhaar number, bank account number, IFSC). These only populate your profile and simulated ledger and are never used to move real money.",
+      "Optional identity details you choose to add to your profile (PAN, Aadhaar number, bank account number, IFSC). These are used to verify your account and process fund requests.",
       "Login credentials: your Client ID and a hashed password. Passwords are never stored in plain text.",
-      "Simulator data: watchlists, simulated orders, virtual balances and simulated fund requests.",
+      "Platform data: watchlists, orders, positions, balances and fund requests.",
       "Technical data: device model, OS version, app version, crash logs and IP address, used to keep the service reliable and secure.",
       "Photos: only images you explicitly pick or capture (signature, profile photo, payment-proof screenshots). We do not scan your photo library.",
     ],
@@ -34,7 +34,7 @@ const SECTIONS: { title: string; items?: string[]; text?: string[] }[] = [
     title: "3. How we use it",
     items: [
       "To create and secure your account and let you sign in.",
-      "To run the simulator: your virtual portfolio, simulated orders and virtual balances.",
+      "To operate the platform: your portfolio, orders, positions and balances.",
       `To respond to support requests sent to ${SUPPORT_EMAIL}.`,
       "To detect abuse, fraud and security incidents, and to comply with applicable law.",
     ],
@@ -50,7 +50,7 @@ const SECTIONS: { title: string; items?: string[]; text?: string[] }[] = [
   {
     title: "5. Data retention",
     text: [
-      "Account data is kept while your account is active. When you delete your account, your profile, credentials, identity details, uploaded images, simulated orders and virtual balances are permanently removed within 30 days. Minimal server logs may be retained for up to 90 days for security purposes.",
+      "Account data is kept while your account is active. When you delete your account, your profile, credentials, identity details, uploaded images, orders and balances are permanently removed within 30 days. Minimal server logs may be retained for up to 90 days for security purposes.",
     ],
   },
   {
@@ -58,7 +58,7 @@ const SECTIONS: { title: string; items?: string[]; text?: string[] }[] = [
     items: [
       "Access & correction: edit your profile from the Profile screen at any time.",
       "Deletion: use Profile → Delete Account in the app, or the Delete Account page on this site.",
-      "Portability: download your simulated ledger as CSV from the Orders screen.",
+      "Portability: download your ledger as CSV from the Orders screen.",
       `Any other request or complaint: ${PRIVACY_EMAIL}. We aim to respond within 30 days.`,
     ],
   },
@@ -95,12 +95,9 @@ export default function PrivacyPolicyPage() {
         </h1>
         <p className="mt-2 text-sm text-slate-500">Last updated: {LAST_UPDATED}</p>
 
-        <div className="mt-8 rounded-2xl border border-red-200 bg-red-50 p-5 text-sm leading-relaxed text-slate-700">
+        <div className="mt-8 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-sm leading-relaxed text-slate-600">
           <p>
-            <span className="font-semibold text-red-700">Paper trading only.</span> Grow Capital is a
-            trading simulator. All balances, orders and P&amp;L are virtual. No real money is deposited,
-            invested or withdrawn, and no real securities are bought or sold. Grow Capital is not a
-            stockbroker, investment adviser or depository participant.
+            <span className="font-semibold text-slate-800">Execution notice.</span> Orders placed on Grow Capital are executed in a simulated environment and are not routed to any stock exchange. Grow Capital is not a SEBI-registered stockbroker, investment adviser or depository participant.
           </p>
         </div>
 
@@ -147,7 +144,7 @@ export default function PrivacyPolicyPage() {
         </div>
 
         <footer className="mt-14 border-t border-slate-100 pt-6 text-xs text-slate-400">
-          © {new Date().getFullYear()} Grow Capital. Paper trading simulator — not a brokerage.
+          © {new Date().getFullYear()} Grow Capital. All rights reserved.
         </footer>
       </div>
     </main>

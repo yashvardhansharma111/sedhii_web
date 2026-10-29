@@ -21,8 +21,7 @@ type UserDoc = {
  *   2. Not signed in (the public /delete-account web page)
  *      + `clientId` and `password` in the JSON body.
  *
- * Grow Capital is a paper-trading simulator, so there is no real balance to
- * settle first — virtual balances, simulated trades and positions are simply erased.
+ * Trades, positions and balances tied to the account are erased with it.
  */
 export async function DELETE(request: Request) {
   try {

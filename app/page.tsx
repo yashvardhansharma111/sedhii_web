@@ -1220,18 +1220,14 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Paper trading disclosure */}
-          <div className="mt-10 rounded-2xl border border-red-100 bg-red-50 p-6">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-red-600 mb-2">Paper trading simulator</p>
-            <p className="text-xs leading-relaxed text-slate-600">
-              Grow Capital is a paper trading simulator for learning and practice. Every balance, order,
-              position and P&amp;L shown on the web and in the Android app is <span className="font-medium text-slate-800">virtual</span>.
-              No real money is deposited, invested or withdrawn, and no real securities are bought or sold.
-              Grow Capital is not a stockbroker, investment adviser, portfolio manager or depository participant,
-              and nothing here is investment advice.{" "}
-              <Link href="/privacy" className="font-medium text-red-600 hover:underline">Privacy policy</Link>
+          {/* Execution notice */}
+          <div className="mt-10 rounded-2xl border border-slate-100 bg-slate-50 p-6">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-2">Execution notice</p>
+            <p className="text-xs leading-relaxed text-slate-500">
+              Orders placed on Grow Capital are executed in a simulated environment and are not routed to any stock exchange. Grow Capital is not a SEBI-registered stockbroker, investment adviser or depository participant. Nothing on this site is investment advice.{" "}
+              <Link href="/privacy" className="font-medium text-slate-700 hover:underline">Privacy policy</Link>
               {" · "}
-              <Link href="/delete-account" className="font-medium text-red-600 hover:underline">Delete your account</Link>
+              <Link href="/delete-account" className="font-medium text-slate-700 hover:underline">Delete your account</Link>
             </p>
           </div>
 
@@ -1239,7 +1235,7 @@ export default function HomePage() {
           <div className="mt-6 flex flex-col items-start justify-between gap-3 border-t border-slate-100 pt-6 text-xs text-slate-400 md:flex-row md:items-center">
             <p>© {new Date().getFullYear()} Grow Capital. All rights reserved.</p>
             <p className="max-w-xl text-center md:text-right">
-              Paper trading only — simulated orders with virtual funds. Not a brokerage; no real money is involved.
+              Orders are executed in a simulated environment and are not routed to any stock exchange.
             </p>
           </div>
         </div>
