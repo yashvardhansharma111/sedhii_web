@@ -171,6 +171,8 @@ export default function FundsPage() {
   const [submitting, setSubmitting] = useState(false);
   const [msg, setMsg] = useState<{ text: string; ok: boolean } | null>(null);
   const [chooserOpen, setChooserOpen] = useState(false);
+  /** Set when the broker's QR image 404s, so the card hides instead of breaking. */
+  const [qrImageBroken, setQrImageBroken] = useState(false);
   const qrRef = useRef<HTMLCanvasElement>(null);
 
   const load = useCallback(async () => {
@@ -184,6 +186,7 @@ export default function FundsPage() {
         upiId: cfg.paymentMeta?.upiId ?? null,
         accountHolder: cfg.paymentMeta?.accountHolder ?? null,
       });
+      setQrImageBroken(false);
       setFundConfig(cfg);
       setRequests(req.requests ?? []);
     } catch (e) {
@@ -513,8 +516,9 @@ export default function FundsPage() {
             )}
           </div>
 
-          {/* QR code */}
-          {fundConfig?.qrUrl ? (
+          {/* Broker-uploaded QR. Hidden outright if the image fails to load —
+              a dead URL should show nothing, not a broken-image icon. */}
+          {fundConfig?.qrUrl && !qrImageBroken ? (
             <div
               className="flex flex-col items-center rounded-2xl border p-4"
               style={{ borderColor: "var(--ax-border)", background: "#ffffff" }}
@@ -523,7 +527,14 @@ export default function FundsPage() {
                 Scan &amp; Pay
               </p>
               <div className="overflow-hidden rounded-xl">
-                <Image src={fundConfig.qrUrl} alt="Payment QR" width={200} height={200} unoptimized />
+                <Image
+                  src={fundConfig.qrUrl}
+                  alt="Payment QR"
+                  width={200}
+                  height={200}
+                  unoptimized
+                  onError={() => setQrImageBroken(true)}
+                />
               </div>
             </div>
           ) : null}

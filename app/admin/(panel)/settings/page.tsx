@@ -41,9 +41,13 @@ export default function AdminSettingsPage() {
   const load = useCallback(async () => {
     setErr(null);
     try {
-      const data = await adminJson<{ qrUrl?: string | null; paymentMeta?: Partial<Meta> | null }>(
-        "/api/admin/qr",
-      );
+      const data = await adminJson<{
+        qrUrl?: string | null;
+        hasImage?: boolean;
+        paymentMeta?: Partial<Meta> | null;
+      }>("/api/admin/qr");
+      // Only ever the external fallback URL — the API no longer echoes our own
+      // image endpoint here, so saving can't persist a self-referential path.
       setQrUrl(data.qrUrl || "");
       const pm = data.paymentMeta;
       setMeta({

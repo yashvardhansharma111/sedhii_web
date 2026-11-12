@@ -11,6 +11,19 @@ type FundPaymentMeta = {
   ifsc?: string | null;
 };
 
+/**
+ * The QR fallback URL is meant to be an external image. Our own image endpoint
+ * is not a valid value for it — stored there it becomes a self-referential
+ * pointer that survives the image being deleted and then serves a 404 to the
+ * funds page as a broken image. Treat any such value as "not set".
+ */
+function externalQrUrl(raw: unknown): string | null {
+  const v = typeof raw === "string" ? raw.trim() : "";
+  if (!v) return null;
+  if (v.startsWith("/api/") || v.includes("/api/config/fund-qr-image")) return null;
+  return v;
+}
+
 export async function GET() {
   try {
     const cookieStore = await cookies();
@@ -29,16 +42,6 @@ export async function GET() {
       key: "fund_qr_image",
     });
 
-    if (imgDoc?.value?.data) {
-      const metaDoc = await settings.findOne<{ value?: FundPaymentMeta }>({
-        key: "fund_payment_meta",
-      });
-      return NextResponse.json({
-        qrUrl: "/api/config/fund-qr-image",
-        paymentMeta: metaDoc?.value || null,
-      });
-    }
-
     const doc = await settings.findOne<{ value?: string }>({
       key: "fund_qr_url",
     });
@@ -47,8 +50,15 @@ export async function GET() {
       key: "fund_payment_meta",
     });
 
+    // `qrUrl` is only ever the operator-entered external fallback URL. It must
+    // NOT echo back our own image endpoint: the settings form loads this value
+    // straight into its "QR URL (fallback)" input, so returning an internal
+    // path means the next save persists it, and deleting the image then leaves
+    // fund_qr_url dangling at an endpoint that 404s. Image presence travels
+    // separately, as a flag.
     return NextResponse.json({
-      qrUrl: doc?.value || null,
+      qrUrl: externalQrUrl(doc?.value),
+      hasImage: !!imgDoc?.value?.data,
       paymentMeta: metaDoc?.value || null,
     });
   } catch (error) {
@@ -78,7 +88,7 @@ export async function POST(request: Request) {
 
     await settings.updateOne(
       { key: "fund_qr_url" },
-      { $set: { value: qrUrl || null, updatedAt: new Date() } },
+      { $set: { value: externalQrUrl(qrUrl), updatedAt: new Date() } },
       { upsert: true },
     );
 

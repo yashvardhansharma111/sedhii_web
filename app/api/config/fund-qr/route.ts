@@ -9,6 +9,19 @@ type FundPaymentMeta = {
   ifsc?: string | null;
 };
 
+/**
+ * Only an external image URL is a usable fallback. Older saves could persist
+ * our own image endpoint into fund_qr_url (the admin form echoed it back into
+ * its input); once the stored image is deleted that pointer dangles and the
+ * funds page renders a broken image. Treat any internal path as "not set".
+ */
+function externalQrUrl(raw: unknown): string | null {
+  const v = typeof raw === "string" ? raw.trim() : "";
+  if (!v) return null;
+  if (v.startsWith("/api/") || v.includes("/api/config/fund-qr-image")) return null;
+  return v;
+}
+
 export async function GET(request: Request) {
   console.log("\n========== [fund-qr] GET ==========");
   console.log("[fund-qr] headers:", {
@@ -56,7 +69,7 @@ export async function GET(request: Request) {
     console.log("=========================================\n");
 
     return NextResponse.json({
-      qrUrl: doc?.value || null,
+      qrUrl: externalQrUrl(doc?.value),
       paymentMeta: meta,
     });
   } catch (error) {
