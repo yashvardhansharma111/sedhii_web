@@ -200,7 +200,7 @@ export default function FundsPage() {
   const upiUrl = useMemo(() => {
     if (!paymentMeta?.upiId || !numericAmount) return null;
     const pa = paymentMeta.upiId;
-    const pn = encodeURIComponent(paymentMeta.accountHolder ?? "Grow Capital");
+    const pn = encodeURIComponent(paymentMeta.accountHolder ?? "Sedhii");
     const tn = encodeURIComponent(note || `Fund deposit for ${user?.clientId ?? user?.email ?? "user"}`);
     const am = numericAmount.toFixed(2);
     const tr = `CSX${Date.now()}`;   // unique transaction reference

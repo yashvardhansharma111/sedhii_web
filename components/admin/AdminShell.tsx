@@ -44,7 +44,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             Admin
           </p>
           <p className="mt-1 text-lg font-bold text-slate-900">
-            Grow Capital
+            Sedhii
           </p>
         </div>
         <nav className="flex flex-1 flex-col gap-0.5 p-3">

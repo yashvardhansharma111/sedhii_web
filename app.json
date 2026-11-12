@@ -1,7 +1,12 @@
 {
   "expo": {
+    "name": "Sedhii",
+    "slug": "sedhiii",
+    "extra": {
+      "apiUrl": "https://sedhii.com"
+    },
     "android": {
-      "package": "com.growcapitalco.app"
+      "package": "com.sedhiii.app"
     }
   }
 }

@@ -2,14 +2,11 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Grow Capital — Markets, derivatives & commodities",
+  title: "Sedhii — Markets, derivatives & commodities",
   description:
-    "Grow Capital — trade indices, equities, derivatives and commodities on web and Android. Orders are executed in a simulated environment.",
-  icons: {
-    icon: [{ url: "/icon.jpg" }, { url: "/icon.jpeg" }],
-    shortcut: "/icon.jpg",
-    apple: "/icon.jpg",
-  },
+    "Sedhii — trade indices, equities, derivatives and commodities on web and Android. Orders are executed in a simulated environment.",
+  // Favicon and touch icon come from app/icon.png and app/apple-icon.png,
+  // which Next.js picks up automatically — no manual `icons` entry needed.
 };
 
 export default function RootLayout({

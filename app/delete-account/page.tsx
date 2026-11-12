@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 
-const SUPPORT_EMAIL = "support@growcapitalco.com";
+const SUPPORT_EMAIL = "support@sedhii.com";
 const CONFIRM_WORD = "DELETE";
 
 const REMOVED = [
@@ -32,7 +32,7 @@ export default function DeleteAccountPage() {
     if (!canSubmit) return;
     if (
       !window.confirm(
-        "Delete your Grow Capital account permanently? This cannot be undone.",
+        "Delete your Sedhii account permanently? This cannot be undone.",
       )
     ) {
       return;
@@ -63,14 +63,14 @@ export default function DeleteAccountPage() {
     <main className="min-h-screen bg-white text-slate-800">
       <div className="mx-auto max-w-3xl px-5 py-12 md:px-6 md:py-16">
         <Link href="/" className="text-sm font-medium text-red-600 hover:underline">
-          ← Grow Capital
+          ← Sedhii
         </Link>
 
         <h1 className="mt-6 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
           Delete your account
         </h1>
         <p className="mt-2 text-sm text-slate-500">
-          Developer: Grow Capital · App: Grow Capital (com.growcapitalco.app)
+          Developer: Sedhii · App: Sedhii (com.sedhiii.app)
         </p>
 
         <div className="mt-8 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-sm leading-relaxed text-slate-600">
@@ -83,7 +83,7 @@ export default function DeleteAccountPage() {
             <h2 className="text-lg font-semibold text-emerald-800">Account deleted</h2>
             <p className="mt-2 text-[15px] leading-relaxed text-slate-700">
               Your account and all associated data have been permanently removed. Any devices that
-              were signed in are now logged out. Thank you for trying Grow Capital.
+              were signed in are now logged out. Thank you for trying Sedhii.
             </p>
             <Link href="/" className="mt-4 inline-block text-sm font-medium text-red-600 hover:underline">
               Back to home
@@ -152,7 +152,7 @@ export default function DeleteAccountPage() {
             <section className="mt-10">
               <h2 className="text-lg font-semibold text-slate-900">Option 2 — Delete from the app</h2>
               <ol className="mt-3 list-decimal space-y-1.5 pl-5 text-[15px] leading-relaxed text-slate-600">
-                <li>Open Grow Capital and sign in.</li>
+                <li>Open Sedhii and sign in.</li>
                 <li>Go to the <strong>Profile</strong> tab.</li>
                 <li>Tap <strong>Delete Account</strong> at the bottom of the screen.</li>
                 <li>Enter your password, type <strong>{CONFIRM_WORD}</strong>, and confirm.</li>
@@ -165,7 +165,7 @@ export default function DeleteAccountPage() {
                 If you no longer remember your credentials, email{" "}
                 <a
                   className="text-red-600 hover:underline"
-                  href={`mailto:${SUPPORT_EMAIL}?subject=Account%20deletion%20request&body=Please%20delete%20my%20Grow%20Capital%20account.%0AClient%20ID%3A%20%0ARegistered%20phone%3A%20`}
+                  href={`mailto:${SUPPORT_EMAIL}?subject=Account%20deletion%20request&body=Please%20delete%20my%20Sedhii%20account.%0AClient%20ID%3A%20%0ARegistered%20phone%3A%20`}
                 >
                   {SUPPORT_EMAIL}
                 </a>{" "}
@@ -195,7 +195,7 @@ export default function DeleteAccountPage() {
         </section>
 
         <footer className="mt-14 border-t border-slate-100 pt-6 text-xs text-slate-400">
-          © {new Date().getFullYear()} Grow Capital. All rights reserved.
+          © {new Date().getFullYear()} Sedhii. All rights reserved.
         </footer>
       </div>
     </main>

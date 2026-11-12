@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { BrandMark } from "@/components/site/BrandMark";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -38,18 +39,8 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 shadow-xl shadow-slate-200/50">
 
         {/* Logo */}
-        <div className="mb-6 flex items-center gap-3">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/icon.jpeg"
-            alt="Grow Capital"
-            className="h-14 w-14 rounded-2xl object-contain"
-            style={{ boxShadow: "0 0 0 1px rgba(220,38,38,0.15)" }}
-          />
-          <div className="leading-none">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.18em]" style={{ color: "#DC2626" }}>Grow</p>
-            <p className="text-lg font-bold text-slate-900">Capital</p>
-          </div>
+        <div className="mb-6">
+          <BrandMark size="lg" href={null} />
         </div>
 
         <h1 className="text-2xl font-bold text-slate-900">Admin sign in</h1>

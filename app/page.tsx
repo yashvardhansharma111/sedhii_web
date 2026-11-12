@@ -27,10 +27,11 @@ import {
   FiUserCheck,
   FiZap,
 } from "react-icons/fi";
+import { BrandMark } from "@/components/site/BrandMark";
+import { SITE } from "@/lib/site";
 
-const APK_URL: string =
-  "https://www.dropbox.com/scl/fi/7fr0lan7dg3v8b6crdg9d/growcapital.apk?rlkey=8nj3uoq8jvhf6ms25ugkfikkd&st=qicvuryd&dl=1";
-const SUPPORT_EMAIL = "support@growcapitalco.com";
+const APK_URL: string = SITE.apkUrl;
+const SUPPORT_EMAIL = SITE.supportEmail;
 
 const TICKER = [
   { symbol: "NIFTY 50", value: "24,583.10", changePct: 0.42 },
@@ -48,7 +49,7 @@ const TICKER = [
 const FAQS: { q: string; a: string }[] = [
   {
     q: "How do I get an account?",
-    a: "Fill out the signup form with your KYC details (PAN, Aadhaar, bank, signature). The Grow Capital team reviews each request and emails your Client ID and password from support@growcapitalco.com once approved.",
+    a: "Fill out the signup form with your KYC details (PAN, Aadhaar, bank, signature). The Sedhii team reviews each request and emails your Client ID and password from support@sedhii.com once approved.",
   },
   {
     q: "How fresh is the market data?",
@@ -190,26 +191,8 @@ export default function HomePage() {
         }}
       >
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3.5 md:px-6">
-          <Link href="/" className="flex items-center gap-3 group">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/icon.jpeg"
-              alt="Grow Capital"
-              className="h-10 w-10 rounded-xl object-contain transition-transform group-hover:scale-105"
-              style={{ boxShadow: "0 0 20px rgba(220,38,38,0.25)" }}
-            />
-            <div className="leading-none">
-              <p
-                className="text-[10px] font-semibold uppercase tracking-[0.18em]"
-                style={{ color: D.primary }}
-              >
-                Grow
-              </p>
-              <p className="mt-0.5 text-base font-bold" style={{ color: D.text }}>
-                Capital
-              </p>
-            </div>
-          </Link>
+          <BrandMark size="md" />
+
           <nav className="flex items-center gap-2 sm:gap-3">
             {[
               { href: "#features", label: "Features" },
@@ -330,7 +313,7 @@ export default function HomePage() {
               style={{ color: D.textSec }}
             >
               Live charts, orders, mutual funds and a running ledger  all in
-              one place. Sign in on the web, or take Grow Capital with you on
+              one place. Sign in on the web, or take Sedhii with you on
               Android.{" "}
               <span className="font-semibold" style={{ color: D.text }}>
                 One account. Every market.
@@ -558,7 +541,7 @@ export default function HomePage() {
                   color: D.textSec,
                 }}
               >
-                New to Grow Capital?{" "}
+                New to Sedhii?{" "}
                 <Link
                   href="/signup"
                   className="font-semibold"
@@ -603,7 +586,7 @@ export default function HomePage() {
               Three steps to your first trade.
             </h2>
             <p className="mt-3 text-base" style={{ color: D.textSec }}>
-              No cold onboarding. Every account is reviewed by the Grow Capital
+              No cold onboarding. Every account is reviewed by the Sedhii
               Exchange team before it goes live.
             </p>
           </div>
@@ -806,7 +789,7 @@ export default function HomePage() {
                 markets.&rdquo;
               </p>
               <p className="mt-4 text-sm font-medium" style={{ color: D.textSec }}>
-                — Grow Capital team
+                — Sedhii team
               </p>
               <div
                 className="mt-8 flex flex-wrap gap-2 border-t pt-6 text-[10px] font-semibold uppercase tracking-wider"
@@ -1035,7 +1018,7 @@ export default function HomePage() {
               </div>
               <div className="text-left">
                 <p className="text-sm font-semibold" style={{ color: D.text }}>
-                  Grow Capital
+                  Sedhii
                 </p>
                 <p className="text-xs" style={{ color: D.textSec }}>
                   Product mandate
@@ -1129,7 +1112,7 @@ export default function HomePage() {
                   Ready to get started?
                 </h3>
                 <p className="mt-2 text-sm sm:text-base" style={{ color: D.textSec }}>
-                  Request an account — the Grow Capital team reviews every request
+                  Request an account — the Sedhii team reviews every request
                   and emails credentials from {SUPPORT_EMAIL} once approved.
                 </p>
               </div>
@@ -1172,18 +1155,7 @@ export default function HomePage() {
           {/* Top grid */}
           <div className="grid gap-10 md:grid-cols-4">
             <div className="md:col-span-2">
-              <div className="flex items-center gap-3">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/icon.jpeg"
-                  alt="Grow Capital"
-                  className="h-10 w-10 rounded-xl object-contain"
-                />
-                <div className="leading-none">
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.18em]" style={{ color: "#DC2626" }}>Grow</p>
-                  <p className="mt-0.5 text-lg font-bold text-slate-900">Capital</p>
-                </div>
-              </div>
+              <BrandMark size="md" />
               <p className="mt-5 max-w-md text-sm leading-relaxed text-slate-400">
                 Live markets, orders, mutual funds and a running ledger  on
                 web and Android, backed by the same data pipeline.
@@ -1224,7 +1196,7 @@ export default function HomePage() {
           <div className="mt-10 rounded-2xl border border-slate-100 bg-slate-50 p-6">
             <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-2">Execution notice</p>
             <p className="text-xs leading-relaxed text-slate-500">
-              Orders placed on Grow Capital are executed in a simulated environment and are not routed to any stock exchange. Grow Capital is not a SEBI-registered stockbroker, investment adviser or depository participant. Nothing on this site is investment advice.{" "}
+              Orders placed on Sedhii are executed in a simulated environment and are not routed to any stock exchange. Sedhii is not a SEBI-registered stockbroker, investment adviser or depository participant. Nothing on this site is investment advice.{" "}
               <Link href="/privacy" className="font-medium text-slate-700 hover:underline">Privacy policy</Link>
               {" · "}
               <Link href="/delete-account" className="font-medium text-slate-700 hover:underline">Delete your account</Link>
@@ -1233,7 +1205,7 @@ export default function HomePage() {
 
           {/* Bottom bar */}
           <div className="mt-6 flex flex-col items-start justify-between gap-3 border-t border-slate-100 pt-6 text-xs text-slate-400 md:flex-row md:items-center">
-            <p>© {new Date().getFullYear()} Grow Capital. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} Sedhii. All rights reserved.</p>
             <p className="max-w-xl text-center md:text-right">
               Orders are executed in a simulated environment and are not routed to any stock exchange.
             </p>

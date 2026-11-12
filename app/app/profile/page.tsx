@@ -5,7 +5,7 @@ import { FiBookOpen, FiChevronRight, FiDollarSign, FiEdit3, FiMail, FiUser } fro
 import { useAppData } from "@/components/app/AppDataContext";
 import { formatINR } from "@/components/app/format";
 
-const SUPPORT_EMAIL = "support@growcapitalco.com";
+const SUPPORT_EMAIL = "support@sedhii.com";
 
 const ROWS = [
   {

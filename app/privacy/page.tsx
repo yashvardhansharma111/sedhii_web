@@ -2,21 +2,21 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — Grow Capital",
+  title: "Privacy Policy — Sedhii",
   description:
-    "How Grow Capital collects, uses and deletes your data.",
+    "How Sedhii collects, uses and deletes your data.",
 };
 
 const LAST_UPDATED = "5 October 2026";
-const SUPPORT_EMAIL = "support@growcapitalco.com";
-const PRIVACY_EMAIL = "privacy@growcapitalco.com";
+const SUPPORT_EMAIL = "support@sedhii.com";
+const PRIVACY_EMAIL = "privacy@sedhii.com";
 
 const SECTIONS: { title: string; items?: string[]; text?: string[] }[] = [
   {
     title: "1. Who we are",
     text: [
-      'Grow Capital ("we", "us", "our") operates the Grow Capital mobile application and the website growcapitalco.com.',
-      "Orders placed on Grow Capital are executed in a simulated environment and are not routed to any stock exchange. Grow Capital is not a SEBI-registered stockbroker, investment adviser or depository participant.",
+      'Sedhii ("we", "us", "our") operates the Sedhii mobile application and the website sedhii.com.',
+      "Orders placed on Sedhii are executed in a simulated environment and are not routed to any stock exchange. Sedhii is not a SEBI-registered stockbroker, investment adviser or depository participant.",
     ],
   },
   {
@@ -71,7 +71,7 @@ const SECTIONS: { title: string; items?: string[]; text?: string[] }[] = [
   {
     title: "8. Children",
     text: [
-      `Grow Capital is not intended for anyone under 18 and we do not knowingly collect personal information from children. If you believe a minor has provided us data, contact ${PRIVACY_EMAIL} and we will delete it.`,
+      `Sedhii is not intended for anyone under 18 and we do not knowingly collect personal information from children. If you believe a minor has provided us data, contact ${PRIVACY_EMAIL} and we will delete it.`,
     ],
   },
   {
@@ -87,7 +87,7 @@ export default function PrivacyPolicyPage() {
     <main className="min-h-screen bg-white text-slate-800">
       <div className="mx-auto max-w-3xl px-5 py-12 md:px-6 md:py-16">
         <Link href="/" className="text-sm font-medium text-red-600 hover:underline">
-          ← Grow Capital
+          ← Sedhii
         </Link>
 
         <h1 className="mt-6 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
@@ -97,7 +97,7 @@ export default function PrivacyPolicyPage() {
 
         <div className="mt-8 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-sm leading-relaxed text-slate-600">
           <p>
-            <span className="font-semibold text-slate-800">Execution notice.</span> Orders placed on Grow Capital are executed in a simulated environment and are not routed to any stock exchange. Grow Capital is not a SEBI-registered stockbroker, investment adviser or depository participant.
+            <span className="font-semibold text-slate-800">Execution notice.</span> Orders placed on Sedhii are executed in a simulated environment and are not routed to any stock exchange. Sedhii is not a SEBI-registered stockbroker, investment adviser or depository participant.
           </p>
         </div>
 
@@ -123,7 +123,7 @@ export default function PrivacyPolicyPage() {
           <section>
             <h2 className="text-lg font-semibold text-slate-900">10. Contact</h2>
             <p className="mt-3 text-[15px] leading-relaxed text-slate-600">
-              Grow Capital
+              Sedhii
               <br />
               Privacy:{" "}
               <a className="text-red-600 hover:underline" href={`mailto:${PRIVACY_EMAIL}`}>
@@ -137,14 +137,14 @@ export default function PrivacyPolicyPage() {
               <br />
               Delete your account:{" "}
               <Link className="text-red-600 hover:underline" href="/delete-account">
-                growcapitalco.com/delete-account
+                sedhii.com/delete-account
               </Link>
             </p>
           </section>
         </div>
 
         <footer className="mt-14 border-t border-slate-100 pt-6 text-xs text-slate-400">
-          © {new Date().getFullYear()} Grow Capital. All rights reserved.
+          © {new Date().getFullYear()} Sedhii. All rights reserved.
         </footer>
       </div>
     </main>

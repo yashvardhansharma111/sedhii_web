@@ -4,7 +4,7 @@
   --background: #f8fafc;
   --foreground: #0f172a;
 
-  /* Grow Capital palette — mirrors stock-app/constants/theme.js */
+  /* Sedhii palette — mirrors stock-app/constants/theme.js */
   --ax-primary: #DC2626;
   --ax-primary-deep: #B91C1C;
   --ax-primary-light: #FCA5A5;
@@ -59,7 +59,7 @@ body {
   border-radius: 16px;
 }
 
-/* Grow Capital brand utilities */
+/* Sedhii brand utilities */
 .cs-gradient-text {
   background: linear-gradient(90deg, #DC2626 0%, #991B1B 50%, #DC2626 100%);
   background-size: 200% auto;

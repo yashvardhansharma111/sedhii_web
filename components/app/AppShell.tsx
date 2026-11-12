@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -13,6 +12,7 @@ import {
   FiUser,
 } from "react-icons/fi";
 import { useAppData } from "./AppDataContext";
+import { BrandMark } from "@/components/site/BrandMark";
 
 const NAV = [
   { href: "/app/markets", label: "Markets", icon: FiBarChart2 },
@@ -69,27 +69,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           className="flex items-center gap-3 border-b px-5 py-5"
           style={{ borderColor: "var(--ax-border)" }}
         >
-          <Image
-            src="/icon.jpeg"
-            alt="Grow Capital"
-            width={40}
-            height={40}
-            className="rounded-xl object-contain"
-          />
-          <div>
-            <p
-              className="text-[11px] font-semibold uppercase tracking-wider"
-              style={{ color: "var(--ax-primary)" }}
-            >
-              Grow
-            </p>
-            <p
-              className="-mt-0.5 text-base font-bold"
-              style={{ color: "var(--ax-text-primary)" }}
-            >
-              Capital
-            </p>
-          </div>
+          <BrandMark size="md" href={null} />
         </Link>
         <nav className="flex flex-1 flex-col gap-0.5 p-3">
           {NAV.map(({ href, label, icon: Icon }) => {
@@ -166,19 +146,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               href="/app/markets"
               className="flex items-center gap-2 md:hidden"
             >
-              <Image
-                src="/icon.jpeg"
-                alt="Grow Capital"
-                width={32}
-                height={32}
-                className="rounded-lg object-contain"
-              />
-              <span
-                className="text-sm font-bold"
-                style={{ color: "var(--ax-text-primary)" }}
-              >
-                Grow Capital
-              </span>
+              <BrandMark size="sm" href={null} />
             </Link>
             <div className="hidden md:block">
               <h1
@@ -188,7 +156,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 {NAV.find(
                   (n) =>
                     pathname === n.href || pathname.startsWith(n.href + "/"),
-                )?.label || "Grow Capital"}
+                )?.label || "Sedhii"}
               </h1>
             </div>
 

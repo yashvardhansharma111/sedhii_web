@@ -1,7 +1,6 @@
 import { apiErrorResponse } from "@/lib/api-error";
 import { getDb } from "@/lib/mongodb";
 import { NextResponse } from "next/server";
-import { clearVerification, clearVerifiedFromDb, isVerifiedWithFallback } from "@/lib/otp-store";
 
 /** Accept only HTTPS URLs from UploadThing / UFS CDNs (not arbitrary user-supplied hosts). */
 function isUploadThingHttpsUrl(url: string): boolean {
@@ -54,18 +53,9 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!await isVerifiedWithFallback("email", email)) {
-      return NextResponse.json(
-        { message: "Please verify your email with the OTP before submitting." },
-        { status: 400 },
-      );
-    }
-    if (!await isVerifiedWithFallback("phone", phone)) {
-      return NextResponse.json(
-        { message: "Please verify your phone number with the OTP before submitting." },
-        { status: 400 },
-      );
-    }
+    // No OTP gate: the Android app registers without one, so requiring a
+    // verified email/phone here would reject every sign-up from the app.
+    // Accounts are vetted manually by admin before credentials are issued.
 
     const db = await getDb();
     const users = db.collection("users");
@@ -144,12 +134,6 @@ export async function POST(request: Request) {
         signatureUploadThingUrl,
       },
     });
-
-    // Consume the OTP marks so they can't be reused.
-    clearVerification("email", email);
-    clearVerification("phone", phone);
-    void clearVerifiedFromDb("email", email);
-    void clearVerifiedFromDb("phone", phone);
 
     return NextResponse.json(
       {
