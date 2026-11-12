@@ -78,6 +78,8 @@ export function CandleChart({
   const [lastUpdated, setLastUpdated] = useState(0);
   const [crosshair, setCrosshair] = useState<number | null>(null);
   const [pulse, setPulse] = useState(false);
+  /** Set when the server fell back to Yahoo, whose NSE/BSE feed lags ~15 min. */
+  const [delayedBy, setDelayedBy] = useState<number | null>(null);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const refreshTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -134,6 +136,8 @@ export function CandleChart({
         const data = (await res.json()) as {
           candles?: Candle[];
           error?: string;
+          delayed?: boolean;
+          delayMinutes?: number;
         };
         if (!res.ok || !data.candles?.length) {
           if (!silent) {
@@ -142,6 +146,7 @@ export function CandleChart({
           }
           return;
         }
+        setDelayedBy(data.delayed ? data.delayMinutes ?? 15 : null);
         setCandles(data.candles);
         setLastUpdated(Date.now());
         setPulse(true);
@@ -354,17 +359,23 @@ export function CandleChart({
             <span
               className="h-1.5 w-1.5 rounded-full"
               style={{
-                backgroundColor: POSITIVE,
-                opacity: range.refreshMs > 0 && pulse ? 1 : 0.45,
-                boxShadow: pulse ? `0 0 6px ${POSITIVE}` : undefined,
+                backgroundColor: delayedBy ? "#B45309" : POSITIVE,
+                opacity: !delayedBy && range.refreshMs > 0 && pulse ? 1 : 0.45,
+                boxShadow: !delayedBy && pulse ? `0 0 6px ${POSITIVE}` : undefined,
                 transition: "opacity 300ms ease",
               }}
             />
             <span
               className="text-[10px] font-bold tracking-wider"
-              style={{ color: POSITIVE }}
+              style={{ color: delayedBy ? "#B45309" : POSITIVE }}
+              title={
+                delayedBy
+                  ? `Angel One is unavailable, so this chart is on the Yahoo Finance fallback, delayed about ${delayedBy} minutes.`
+                  : undefined
+              }
             >
-              LIVE · {range.label}
+              {delayedBy ? `DELAYED ~${delayedBy}m · ` : "LIVE · "}
+              {range.label}
             </span>
             {lastUpdated > 0 ? (
               <span

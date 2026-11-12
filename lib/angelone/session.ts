@@ -71,7 +71,10 @@ export async function login(): Promise<SessionTokens> {
     },
   );
 
-  const json = await res.json();
+  // safeJson, not res.json(): a refused login ("Access denied") comes back as
+  // plain text, and res.json() would surface it as an opaque
+  // "Unexpected token 'A'" parse error all the way out to the chart.
+  const json = await safeJson(res);
   if (!json.status || !json.data?.jwtToken) {
     throw new Error(
       `Angel login failed: ${json.message || JSON.stringify(json)}`,
